@@ -1,0 +1,146 @@
+/* The Gilded Needle — prototype UI styles */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: #241a12;
+  font-family: Georgia, 'Palatino Linotype', 'Times New Roman', serif;
+  -webkit-user-select: none; user-select: none;
+  touch-action: none;
+}
+
+#stage { position: fixed; inset: 0; }
+
+#game {
+  position: absolute; inset: 0;
+  width: 100%; height: 100%;
+  display: block;
+  cursor: pointer;
+}
+
+#ui { position: absolute; inset: 0; pointer-events: none; }
+#ui > * { pointer-events: auto; }
+
+/* ---------- HUD ---------- */
+#hud {
+  position: absolute; top: 12px; left: 14px;
+  display: flex; gap: 10px; align-items: center;
+  pointer-events: none;
+}
+#hud .chip {
+  pointer-events: auto;
+  background: rgba(46, 31, 19, 0.88);
+  border: 2px solid #a8814f;
+  border-radius: 20px;
+  color: #f3e3c2;
+  padding: 6px 14px;
+  font-size: 16px;
+  letter-spacing: 0.5px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.35);
+  white-space: nowrap;
+}
+#hud .chip.btn { cursor: pointer; transition: transform .08s ease, background .12s; }
+#hud .chip.btn:hover { background: rgba(74, 50, 28, 0.94); transform: translateY(-1px); }
+#coins-chip b { color: #f2c14e; font-size: 17px; }
+
+/* ---------- toasts ---------- */
+#toasts {
+  position: absolute; top: 60px; left: 50%; transform: translateX(-50%);
+  display: flex; flex-direction: column; gap: 8px; align-items: center;
+  pointer-events: none;
+}
+.toast {
+  background: rgba(46, 31, 19, 0.92);
+  border: 2px solid #c8a05e;
+  color: #f7ebd2;
+  border-radius: 14px;
+  padding: 8px 18px;
+  font-size: 15px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+  animation: toast-in .25s ease, toast-out .4s ease 2.8s forwards;
+  max-width: 70vw; text-align: center;
+}
+@keyframes toast-in { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; } }
+@keyframes toast-out { to { opacity: 0; transform: translateY(-6px); } }
+
+/* ---------- dialogue ---------- */
+#dialogue {
+  position: absolute; left: 50%; bottom: 26px; transform: translateX(-50%);
+  width: min(720px, 92vw);
+  background: linear-gradient(180deg, #fdf3dd, #f4e2bd);
+  border: 3px solid #7a5230;
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.45), inset 0 0 0 2px #e8d3a8;
+  padding: 14px 20px 12px;
+  cursor: pointer;
+  display: none;
+}
+#dialogue.open { display: block; animation: dlg-in .18s ease; }
+@keyframes dlg-in { from { opacity: 0; transform: translate(-50%, 8px); } to { opacity: 1; } }
+#dialogue .name {
+  position: absolute; top: -14px; left: 16px;
+  background: #7a5230; color: #ffe9bd;
+  border: 2px solid #5c3c20;
+  border-radius: 10px;
+  padding: 2px 12px;
+  font-size: 14px; font-style: italic;
+}
+#dialogue .text { color: #4a300f; font-size: 17px; line-height: 1.45; min-height: 44px; }
+#dialogue .hint {
+  text-align: right; font-size: 12px; color: #93701f; margin-top: 4px; font-style: italic;
+  animation: blink 1.4s infinite;
+}
+@keyframes blink { 0%,100% { opacity: .9; } 50% { opacity: .35; } }
+
+/* ---------- panels (orders / fabrics / ledger) ---------- */
+.panel {
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  width: min(560px, 94vw); max-height: 82vh; overflow-y: auto;
+  background: linear-gradient(180deg, #fbf0d8, #f1ddb4);
+  border: 3px solid #7a5230;
+  border-radius: 16px;
+  box-shadow: 0 14px 40px rgba(0,0,0,0.55), inset 0 0 0 2px #e8d3a8;
+  padding: 18px 22px 20px;
+  color: #4a300f;
+}
+.panel h2 {
+  font-size: 21px; margin-bottom: 4px; color: #5c3c20;
+  border-bottom: 2px dashed #c9a266; padding-bottom: 6px;
+}
+.panel .sub { font-size: 13px; font-style: italic; color: #8a6a3a; margin-bottom: 10px; }
+.panel .close {
+  position: absolute; top: 10px; right: 12px;
+  width: 30px; height: 30px; border-radius: 50%;
+  background: #7a5230; color: #ffe9bd; border: 2px solid #5c3c20;
+  font-size: 15px; line-height: 26px; text-align: center; cursor: pointer;
+}
+.panel .close:hover { background: #93683f; }
+.row {
+  display: flex; align-items: center; gap: 12px;
+  background: rgba(255,255,255,0.35);
+  border: 1.5px solid #d9bd8a;
+  border-radius: 10px;
+  padding: 8px 12px; margin: 7px 0;
+  font-size: 15px;
+}
+.row .grow { flex: 1; }
+.row .meta { font-size: 12.5px; color: #8a6a3a; font-style: italic; }
+.row .swatch {
+  width: 34px; height: 34px; border-radius: 7px; border: 2px solid #7a5230; flex: none;
+  background-size: 12px 12px;
+}
+.row button {
+  font-family: inherit; font-size: 14px;
+  background: #7a5230; color: #ffe9bd;
+  border: 2px solid #5c3c20; border-radius: 9px;
+  padding: 5px 13px; cursor: pointer;
+}
+.row button:hover:not(:disabled) { background: #93683f; }
+.row button:disabled { opacity: 0.45; cursor: default; }
+.row.done { opacity: 0.55; }
+.empty-note { font-style: italic; color: #8a6a3a; padding: 12px 4px; font-size: 15px; }
+
+/* scrollbars */
+.panel::-webkit-scrollbar { width: 10px; }
+.panel::-webkit-scrollbar-thumb { background: #c9a266; border-radius: 6px; }
