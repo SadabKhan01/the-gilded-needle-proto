@@ -25,7 +25,7 @@ sandbox.window = sandbox;
 sandbox.window.addEventListener = () => {};
 vm.createContext(sandbox);
 
-for (const file of ['js/engine.js', 'js/data.js', 'js/management.js']) {
+for (const file of ['js/engine.js', 'js/data.js', 'js/management.js', 'js/ui.js']) {
   vm.runInContext(fs.readFileSync(path.join(root, file), 'utf8'), sandbox, { filename: file });
 }
 
@@ -42,6 +42,15 @@ G.resetSave();
 G.Management.ensure();
 assert.equal(G.S.management.day, 1);
 assert.equal(G.S.management.cleanliness, 82);
+
+G.Orders.add({ kind: 'sew', status: 'open', name: 'Reload test' });
+const persistedOrderId = G.Orders.list[0].id;
+G.Orders.list = [];
+G.load();
+assert.equal(G.Orders.list.length, 1);
+assert.equal(G.Orders.list[0].id, persistedOrderId);
+G.Orders.remove(G.Orders.list[0]);
+assert.equal(G.S.orders.length, 0);
 
 const order = G.Management.enrichOrder({ pay: 20, practice: false });
 assert.equal(order.dueDay, 2);

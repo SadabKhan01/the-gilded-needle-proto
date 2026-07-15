@@ -11,8 +11,29 @@ window.G = window.G || {};
   G.Orders = {
     list: [],          // { id, kind:'sew'|'outfit', name, lookIdx, text, want, fabric, garment, pay, status:'open'|'sewn' }
     nextId: 1,
-    add(o) { o.id = this.nextId++; this.list.push(o); G.UI.updateHUD(); },
-    remove(o) { this.list = this.list.filter(x => x !== o); G.UI.updateHUD(); },
+    hydrate() {
+      this.list = Array.isArray(G.S.orders) ? G.S.orders : [];
+      const highestId = this.list.reduce((max, order) => Math.max(max, Number(order.id) || 0), 0);
+      this.nextId = Math.max(Number(G.S.nextOrderId) || 1, highestId + 1);
+      G.S.orders = this.list;
+      G.S.nextOrderId = this.nextId;
+    },
+    persist() {
+      G.S.orders = this.list;
+      G.S.nextOrderId = this.nextId;
+      G.save();
+      G.UI.updateHUD();
+    },
+    add(o) {
+      if (!o.id) o.id = this.nextId++;
+      else this.nextId = Math.max(this.nextId, Number(o.id) + 1);
+      this.list.push(o);
+      this.persist();
+    },
+    remove(o) {
+      this.list = this.list.filter(x => x !== o && x.id !== o.id);
+      this.persist();
+    },
     openSew() { return this.list.filter(o => o.kind === 'sew' && o.status === 'open'); },
     openOutfit() { return this.list.filter(o => o.kind === 'outfit' && o.status === 'open'); },
   };

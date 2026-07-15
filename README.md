@@ -32,7 +32,7 @@ then open http://localhost:8642. No build step, no dependencies.
 |---|---|
 | Exterior scene | shop front — door, chalkboard, sign, windows, lavender, Mr. Buttons the sparrow |
 | Interior scene | full walkable shop with furniture collision + vertical camera |
-| Customers | doorbell rings, customer walks to the counter, places a sew or outfit order |
+| Customers | doorbell rings, customer walks to the counter, places a persistent sew or outfit order |
 | Sewing mini-game | cut the pins in order, then time the stitches — quality affects pay |
 | Wardrobe mini-game | dress-up screen over the wardrobe painting; find the requested top |
 | Shop management | coins, fabric bolts, order book, ledger with fabric purchases + 3 upgrades |
@@ -44,10 +44,20 @@ then open http://localhost:8642. No build step, no dependencies.
 
 - `js/engine.js` — canvas, input, WebAudio synth, save/load, mode loop
 - `js/data.js` — all content: hotspot coordinates (image space), wardrobe catalog, fabrics, dialogue, memories
+- `js/management.js` — clock, bills, cleanliness, coffee, home comfort, staffing and mother health
 - `js/sprites.js` — procedural chibi sprites (Mari + customers)
 - `js/scenes.js` — exterior/interior modes, movement, collision, customer flow
 - `js/minigames.js` — title, intro, flashbacks, wardrobe dress-up, sewing game
 - `js/ui.js` — DOM HUD, dialogue box, panels, toasts, order book
+
+## Production map
+
+- `design/PRODUCT_PLAN.md` — product canon, core loops, milestones and acceptance criteria
+- `design/ISSUES.md` — layered implementation backlog using `GN-xxx` issue IDs
+- `design/ASSET_MANIFEST.md` — every planned image, priority, generation recipe and curation gate
+- `graphify-out/GRAPH_REPORT.md` — architecture and content-relationship audit
+- `graphify-out/graph.html` — interactive knowledge graph for code, design and reference art
+- `tests/management-smoke.js` — save/load and management-system smoke coverage
 
 ## Next locations (planned)
 

@@ -1,0 +1,117 @@
+{
+  "js/data.js": {
+    "mtime": 1784083636.6458735,
+    "ast_hash": "9c902470f8ae5ca9bc1e36063f335a55",
+    "semantic_hash": "9c902470f8ae5ca9bc1e36063f335a55"
+  },
+  "js/engine.js": {
+    "mtime": 1784084471.5580044,
+    "ast_hash": "5d0c5c9862612ddefe681a3845bc93bf",
+    "semantic_hash": "5d0c5c9862612ddefe681a3845bc93bf"
+  },
+  "js/main.js": {
+    "mtime": 1784083195.3635755,
+    "ast_hash": "db6af0e24118f1490dfa67a8a7fd5d47",
+    "semantic_hash": "db6af0e24118f1490dfa67a8a7fd5d47"
+  },
+  "js/management.js": {
+    "mtime": 1784083780.3142934,
+    "ast_hash": "6288379efdb64c8abf50a888f6d7c952",
+    "semantic_hash": "6288379efdb64c8abf50a888f6d7c952"
+  },
+  "js/minigames.js": {
+    "mtime": 1784083195.3638587,
+    "ast_hash": "87577cbe63b8bda0b628350d46f4d40b",
+    "semantic_hash": "87577cbe63b8bda0b628350d46f4d40b"
+  },
+  "js/scenes.js": {
+    "mtime": 1784084163.9001265,
+    "ast_hash": "33c46682354e992baab6045cf9af827b",
+    "semantic_hash": "33c46682354e992baab6045cf9af827b"
+  },
+  "js/sprites.js": {
+    "mtime": 1784083195.3642678,
+    "ast_hash": "c6821428830bf5619b55e5ac87ae5a56",
+    "semantic_hash": "c6821428830bf5619b55e5ac87ae5a56"
+  },
+  "js/ui.js": {
+    "mtime": 1784084471.5582588,
+    "ast_hash": "9bccecaf45fd00db1531c87e6a03810a",
+    "semantic_hash": "9bccecaf45fd00db1531c87e6a03810a"
+  },
+  "tests/management-smoke.js": {
+    "mtime": 1784084471.5585518,
+    "ast_hash": "ff77d23e99f5549a7a48bffe5f42c3d7",
+    "semantic_hash": "ff77d23e99f5549a7a48bffe5f42c3d7"
+  },
+  "README.md": {
+    "mtime": 1784083636.6461499,
+    "ast_hash": "f8efd8fd741441a3bda6105fc5429d5a",
+    "semantic_hash": "f8efd8fd741441a3bda6105fc5429d5a"
+  },
+  "assets/reference/README.md": {
+    "mtime": 1784083195.400067,
+    "ast_hash": "114621f628033826f11993456b608d95",
+    "semantic_hash": "114621f628033826f11993456b608d95"
+  },
+  "design/ASSET_MANIFEST.md": {
+    "mtime": 1784083195.4343023,
+    "ast_hash": "2730d8eb248610e99fe6b2e6e8419c8a",
+    "semantic_hash": "2730d8eb248610e99fe6b2e6e8419c8a"
+  },
+  "design/ISSUES.md": {
+    "mtime": 1784083195.436405,
+    "ast_hash": "4c8a0420ee5f5dd560da955185eab35d",
+    "semantic_hash": "4c8a0420ee5f5dd560da955185eab35d"
+  },
+  "design/PRODUCT_PLAN.md": {
+    "mtime": 1784083195.4366856,
+    "ast_hash": "4fdff239b1a2c15accfdc3f0cda2f0e8",
+    "semantic_hash": "4fdff239b1a2c15accfdc3f0cda2f0e8"
+  },
+  "index.html": {
+    "mtime": 1784083559.1153624,
+    "ast_hash": "04c0af1b44a70410d5c79d4aa3287b9a",
+    "semantic_hash": "04c0af1b44a70410d5c79d4aa3287b9a"
+  },
+  "assets/exterior.png": {
+    "mtime": 1784083195.3508801,
+    "ast_hash": "a4c562516abaa8bffa9a4da86ecb39e4",
+    "semantic_hash": "a4c562516abaa8bffa9a4da86ecb39e4"
+  },
+  "assets/interior.png": {
+    "mtime": 1784083195.3544207,
+    "ast_hash": "70a8f69c09a32e4d8757c26690b059f4",
+    "semantic_hash": "70a8f69c09a32e4d8757c26690b059f4"
+  },
+  "assets/reference/auberlin-town-map.png": {
+    "mtime": 1784083195.4096208,
+    "ast_hash": "fea7561fefd32e6c67242d9a50044b36",
+    "semantic_hash": "fea7561fefd32e6c67242d9a50044b36"
+  },
+  "assets/reference/grandmother-character-sheet.png": {
+    "mtime": 1784083195.4142184,
+    "ast_hash": "de508903b9a6cd02ebabe91aba146cc8",
+    "semantic_hash": "de508903b9a6cd02ebabe91aba146cc8"
+  },
+  "assets/reference/marielle-character-sheet.png": {
+    "mtime": 1784083195.4170282,
+    "ast_hash": "cff4a9429ba82fd2993132052f637559",
+    "semantic_hash": "cff4a9429ba82fd2993132052f637559"
+  },
+  "assets/reference/spindle-square-overcast.png": {
+    "mtime": 1784083195.4246466,
+    "ast_hash": "86b5a8fa1720249ffa01cb650ed47db4",
+    "semantic_hash": "86b5a8fa1720249ffa01cb650ed47db4"
+  },
+  "assets/reference/spindle-square-sunny.png": {
+    "mtime": 1784083195.4339836,
+    "ast_hash": "c814340031578e95ddf29136f160b673",
+    "semantic_hash": "c814340031578e95ddf29136f160b673"
+  },
+  "assets/wardrobe.png": {
+    "mtime": 1784083195.360423,
+    "ast_hash": "3ab9aad36580d323bd34727c1fe60e1f",
+    "semantic_hash": "3ab9aad36580d323bd34727c1fe60e1f"
+  }
+}

@@ -125,6 +125,8 @@ window.G = window.G || {};
     fabrics: { gingham_red: 3, linen_cream: 2, gingham_blue: 1 },
     upgrades: {},
     ordersDone: 0,
+    orders: [],
+    nextOrderId: 1,
     memoriesSeen: {},
     introSeen: false,
     management: {
@@ -155,9 +157,14 @@ window.G = window.G || {};
       const raw = localStorage.getItem(SAVE_KEY);
       if (raw) G.S = Object.assign(DEFAULT_STATE(), JSON.parse(raw));
       if (G.Management) G.Management.ensure();
+      if (G.Orders) G.Orders.hydrate();
     } catch (e) { G.S = DEFAULT_STATE(); }
   };
-  G.resetSave = function () { G.S = DEFAULT_STATE(); G.save(); };
+  G.resetSave = function () {
+    G.S = DEFAULT_STATE();
+    if (G.Orders) G.Orders.hydrate();
+    G.save();
+  };
 
   // ---------- mode manager + loop ----------
   G.modes = {};

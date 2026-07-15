@@ -277,9 +277,10 @@ window.G = window.G || {};
       this.t += dt;
       G.updateFade(dt);
       this.updateCustomer(dt);
-      G.Management.tick(dt, this.customer);
+      const shopFrozen = G.UI.busy() || G.Fade.dir !== 0;
+      if (!shopFrozen) G.Management.tick(dt, this.customer);
       G.UI.updateHUD();
-      if (G.UI.busy() || G.Fade.dir !== 0) { this.player.walking = false; return; }
+      if (shopFrozen) { this.player.walking = false; return; }
 
       const p = this.player, v = this.view();
       let ax = G.Input.axis().x, ay = G.Input.axis().y;
