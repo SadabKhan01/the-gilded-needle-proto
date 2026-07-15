@@ -35,8 +35,8 @@ Issues are ordered for a layered build. Each item is small enough to become a Gi
 
 ## Milestone 2 - household and family
 
-- [ ] GN-201 P0 Create walkable current-home map and evening transition.
-- [ ] GN-202 P0 Render home items by upgrade state.
+- [x] GN-201 P0 Create walkable current-home map and evening transition.
+- [x] GN-202 P0 Render home items by upgrade state.
 - [ ] GN-203 P0 Add Elise NPC, portrait, apron sprites, shop tasks, and home rest state.
 - [ ] GN-204 P0 Add telegraphed mother-health schedule and medicine/rest choices.
 - [ ] GN-205 P0 Implement Brida memory corner and tutorial-note collection.

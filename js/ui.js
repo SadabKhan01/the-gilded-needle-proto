@@ -234,7 +234,10 @@ window.G = window.G || {};
       if (location.action === 'tailor') {
         this.closePanel();
         G.transition(() => G.setMode('exterior', { fromDoor: true }));
-      } else if (location.action === 'home') this.openHomePanel();
+      } else if (location.action === 'home') {
+        this.closePanel();
+        G.transition(() => G.setMode('home', { fromMap: true }));
+      }
       else if (location.action === 'brickworks') this.openBrickworksPanel();
       else if (location.supplier) this.openSupplierPanel(location.supplier);
     },
@@ -267,10 +270,25 @@ window.G = window.G || {};
     openHomePanel() {
       const m = G.Management.ensure();
       const owned = Object.keys(G.Management.homeItems).filter(id => m.home[id]).map(id => G.Management.homeItems[id].name);
+      const itemRows = Object.keys(G.Management.homeItems).map(id => {
+        const item = G.Management.homeItems[id];
+        const has = !!m.home[id];
+        const icon = item.kind === 'kitchen' ? '🍳' : item.kind === 'memory' ? '🧵' : '🪑';
+        return `<div class="row ${has ? 'done' : ''}"><div class="supply-icon">${icon}</div><div class="grow"><b>${item.name}</b><div class="meta">${item.desc} Comfort +${item.comfort}</div></div>${has ? '<b>✓ home</b>' : `<button data-home-buy="${id}" ${G.S.coins < item.price ? 'disabled' : ''}>🪙 ${item.price}</button>`}</div>`;
+      }).join('');
+      const fromHome = G.modeName === 'home';
       const el = this._openPanel(
-        `<button class="panel-back" data-back-map>← Map</button><h2>🏠 Thimm Family Home</h2><div class="sub">A small place made safer one paid bill and one useful object at a time.</div>
-         <div class="family-card"><div class="elise-portrait"></div><div><b>Elise Thimm · Mother</b><p>${G.Management.motherLabel()} · health ${Math.round(m.mother.health)}%</p><p>Home comfort ${m.homeComfort}. ${owned.length ? 'At home: ' + owned.join(', ') + '.' : 'The rooms are still almost bare.'}</p></div></div>`);
-      el.querySelector('[data-back-map]').addEventListener('click', () => this.openMapPanel());
+        `<button class="panel-back" data-home-back>← ${fromHome ? 'Room' : 'Map'}</button><h2>🏠 Home Essentials</h2><div class="sub">The bed and oil light are all they begin with. Kitchen appliances and comforts must be bought from shop earnings.</div>
+         <div class="family-card"><div class="elise-portrait"></div><div><b>Elise Thimm · Mother</b><p>${G.Management.motherLabel()} · health ${Math.round(m.mother.health)}%</p><p>Home comfort ${m.homeComfort}. ${owned.length ? 'At home: ' + owned.join(', ') + '.' : 'The kitchen is bare and the room has almost nothing.'}</p></div></div>
+         <h2 class="section-title">Things the home still needs</h2>${itemRows}`);
+      el.querySelector('[data-home-back]').addEventListener('click', () => fromHome ? this.closePanel() : this.openMapPanel());
+      el.querySelectorAll('[data-home-buy]').forEach(button => button.addEventListener('click', () => {
+        const result = G.Management.buyHome(button.dataset.homeBuy);
+        G.Audio.play(result.ok ? 'success' : 'error');
+        this.toast(result.message);
+        this.updateHUD();
+        this.openHomePanel();
+      }));
     },
 
     openBrickworksPanel() {

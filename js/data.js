@@ -292,4 +292,29 @@ window.G = window.G || {};
     painting_after: ['Mother in cream linen. The best seam I ever closed.'],
   };
 
+  // ---------- HOME scene (generated bare-home artwork 1672x941) ----------
+  G.HOME = {
+    img: 'home',
+    w: 1672, h: 941,
+    playerH: 132,
+    bounds: { minX: 150, maxX: 1515, minY: 325, maxY: 815 },
+    start: { x: 835, y: 790 },
+    blocks: [
+      [135, 265, 390, 440],      // single bed
+      [1010, 230, 520, 320],     // bare kitchen counter and basin
+    ],
+    hotspots: [
+      { id: 'exit', label: 'Return to the town map', x: 835, y: 825, r: 95, icon: '🚪' },
+      { id: 'bed', label: 'The only bed', x: 390, y: 595, r: 130, icon: '🛏️' },
+      { id: 'lamp', label: 'The oil light', x: 270, y: 245, r: 90, icon: '💡' },
+      { id: 'kitchen', label: 'Empty kitchen', x: 1260, y: 500, r: 175, icon: '🪙' },
+    ],
+  };
+
+  G.HOME_FLAVOR = {
+    bed: ['One bed for two people. Mother takes it when she is ill; I make a pallet from coats beside her.'],
+    lamp: ['One flame, one room. Oil is cheaper when we remember to turn it low.'],
+    kitchen: ['A counter, a basin, and empty spaces. A stove and icebox will come when the shop can pay for them.'],
+  };
+
 })();

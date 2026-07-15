@@ -63,6 +63,12 @@ const laceBefore = G.S.materials.lace;
 assert.equal(G.Management.buySupply('ship_deck', 'material', 'lace').ok, true);
 assert.equal(G.S.materials.lace, laceBefore + 1);
 
+G.S.coins = 100;
+const comfortBeforeIcebox = G.S.management.homeComfort;
+assert.equal(G.Management.buyHome('icebox').ok, true);
+assert.equal(G.S.management.home.icebox, true);
+assert.equal(G.S.management.homeComfort, comfortBeforeIcebox + G.Management.homeItems.icebox.comfort);
+
 G.Orders.add({ kind: 'sew', status: 'open', name: 'Reload test' });
 const persistedOrderId = G.Orders.list[0].id;
 G.Orders.list = [];

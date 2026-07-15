@@ -566,7 +566,160 @@ window.G = window.G || {};
     },
   };
 
+  // ---------------- FAMILY HOME ----------------
+  const Home = {
+    t: 0,
+    player: { x: 835, y: 790, flip: false, walking: false, dir: 'back' },
+    target: null,
+
+    enter() {
+      const D = G.HOME;
+      this.t = 0;
+      this.player.x = D.start.x; this.player.y = D.start.y;
+      this.target = null;
+      G.S.currentLocation = 'home';
+      G.save();
+      G.UI.showHUD(true);
+      if (!this._welcomed) {
+        this._welcomed = true;
+        setTimeout(() => G.UI.say('Mari', [
+          'Home. One bed, one oil light, and a kitchen with nothing in it yet.',
+          'The empty spaces are not shameful. They are a list of what the shop will buy us next.',
+        ]), 350);
+      }
+    },
+
+    view() {
+      const D = G.HOME;
+      const s = Math.min(G.W / D.w, G.H / D.h);
+      return { s, ox: (G.W - D.w * s) / 2, oy: (G.H - D.h * s) / 2 };
+    },
+
+    blocked(x, y) {
+      const D = G.HOME;
+      if (x < D.bounds.minX || x > D.bounds.maxX || y < D.bounds.minY || y > D.bounds.maxY) return true;
+      const blocks = D.blocks.slice();
+      if (G.Management.ensure().home.chair) blocks.push([690, 420, 145, 145]);
+      for (const b of blocks) {
+        if (x > b[0] && x < b[0] + b[2] && y > b[1] && y < b[1] + b[3]) return true;
+      }
+      return false;
+    },
+
+    move(dx, dy, dt) {
+      const p = this.player, step = 305 * dt;
+      let moved = false;
+      const nx = p.x + dx * step;
+      if (dx && !this.blocked(nx, p.y)) { p.x = nx; moved = true; }
+      const ny = p.y + dy * step;
+      if (dy && !this.blocked(p.x, ny)) { p.y = ny; moved = true; }
+      return moved;
+    },
+
+    hotspotNear() {
+      const p = this.player;
+      let best = null, bd = 1e9;
+      for (const h of G.HOME.hotspots) {
+        const d = G.dist(p.x, p.y, h.x, h.y);
+        if (d < h.r + 45 && d < bd) { best = h; bd = d; }
+      }
+      return best;
+    },
+
+    hotspotAt(x, y) {
+      let best = null, bd = 1e9;
+      for (const h of G.HOME.hotspots) {
+        const d = G.dist(x, y, h.x, h.y);
+        if (d < h.r && d < bd) { best = h; bd = d; }
+      }
+      return best;
+    },
+
+    update(dt) {
+      this.t += dt;
+      G.updateFade(dt);
+      if (G.UI.busy() || G.Fade.dir !== 0) { this.player.walking = false; return; }
+      const p = this.player, v = this.view();
+      let ax = G.Input.axis().x, ay = G.Input.axis().y;
+      if (G.Input.mouse.clicked) {
+        const ix = (G.Input.mouse.x - v.ox) / v.s;
+        const iy = (G.Input.mouse.y - v.oy) / v.s;
+        const clicked = this.hotspotAt(ix, iy), near = this.hotspotNear();
+        if (clicked && clicked === near) this.interact(clicked);
+        else this.target = { x: ix, y: iy };
+      }
+      if (ax || ay) this.target = null;
+      if (this.target) {
+        const dx = this.target.x - p.x, dy = this.target.y - p.y;
+        const d = Math.hypot(dx, dy);
+        if (d < 10) { this.target = null; const h = this.hotspotNear(); if (h) this.interact(h); }
+        else { ax = dx / d; ay = dy / d; }
+      }
+      p.walking = !!(ax || ay) && this.move(ax, ay, dt);
+      if (p.walking) {
+        if (ax) p.flip = ax < 0;
+        p.dir = ay < -0.3 ? 'back' : 'front';
+      }
+      if (G.Input.pressed('KeyE') || G.Input.pressed('Space')) {
+        const h = this.hotspotNear(); if (h) this.interact(h);
+      }
+    },
+
+    interact(h) {
+      G.Audio.play('click');
+      if (h.id === 'exit') {
+        G.Audio.play('door');
+        G.UI.openMapPanel();
+      } else if (h.id === 'kitchen') {
+        G.UI.openHomePanel();
+      } else if (h.id === 'bed' && G.Management.ensure().mother.status !== 'working') {
+        G.UI.say('Elise', ['I am resting, truly. Show me the order book later and I will help you count tomorrow\'s work.']);
+      } else {
+        G.UI.say('Mari', G.HOME_FLAVOR[h.id] || ['There is not much here yet, but it is ours.']);
+      }
+    },
+
+    drawUpgrades(ctx, v) {
+      const home = G.Management.ensure().home;
+      ctx.save();
+      ctx.translate(v.ox, v.oy); ctx.scale(v.s, v.s);
+      const sheet = G.images.home_upgrades, q = 627;
+      const prop = (owned, sx, sy, x, y, size) => {
+        if (owned) ctx.drawImage(sheet, sx, sy, q, q, x, y, size, size);
+      };
+      prop(home.chair, 0, 0, 720, 390, 280);
+      prop(home.stove, q, 0, 965, 235, 345);
+      prop(home.icebox, 0, q, 1260, 240, 330);
+      prop(home.brida_corner, q, q, 450, 230, 300);
+      ctx.restore();
+    },
+
+    draw(ctx) {
+      drawLetterbox(ctx);
+      const D = G.HOME, v = this.view(), p = this.player;
+      ctx.drawImage(G.images[D.img], v.ox, v.oy, D.w * v.s, D.h * v.s);
+      this.drawUpgrades(ctx, v);
+      const near = this.hotspotNear();
+      for (const h of D.hotspots) {
+        if (h !== near) drawMarker(ctx, v.ox + h.x * v.s, v.oy + h.y * v.s, this.t + h.x);
+      }
+      const motherHome = G.Management.ensure().mother.status !== 'working';
+      const actors = [{ kind: 'player', x: p.x, y: p.y }];
+      if (motherHome) actors.push({ kind: 'mother', x: 525, y: 695 });
+      actors.sort((a, b) => a.y - b.y).forEach(actor => {
+        const sprite = actor.kind === 'mother' ? G.Sprites.elise : G.Sprites.mari;
+        G.drawSprite(ctx, sprite, v.ox + actor.x * v.s, v.oy + actor.y * v.s, (D.playerH + (actor.kind === 'mother' ? 5 : 0)) * v.s,
+          { walking: actor.kind === 'player' && p.walking, flip: actor.kind === 'player' && p.flip, view: actor.kind === 'player' ? p.dir : 'front', time: this.t });
+        if (actor.kind === 'mother') drawNamePill(ctx, v.ox + actor.x * v.s, v.oy + (actor.y - D.playerH - 18) * v.s, 'Elise · resting');
+      });
+      if (near && !G.UI.busy()) drawPrompt(ctx, v.ox + near.x * v.s, v.oy + near.y * v.s - 30, near.icon, near.label, this.t);
+      drawVignette(ctx);
+      G.drawFade(ctx);
+    },
+  };
+
   G.modes.exterior = Ext;
   G.modes.interior = Int;
+  G.modes.home = Home;
 
 })();

@@ -4,9 +4,10 @@ window.G = window.G || {};
 
 (function () {
   const HOME_ITEMS = {
-    chair: { name: 'A proper chair', price: 25, comfort: 8, desc: 'A place for Mother to rest without climbing into bed.' },
-    stove: { name: 'Reliable stove', price: 55, comfort: 14, desc: 'Warm meals make long days gentler.' },
-    brida_corner: { name: "Brida's sewing corner", price: 90, comfort: 20, desc: 'Her notes, thimble, and green cardigan together.' },
+    chair: { name: 'A proper chair', price: 25, comfort: 8, kind: 'furniture', desc: 'A place for Mother to rest without climbing into bed.' },
+    stove: { name: 'Small iron stove', price: 55, comfort: 14, kind: 'kitchen', desc: 'The first real appliance: warm meals instead of cold bread.' },
+    icebox: { name: 'Wooden icebox', price: 70, comfort: 16, kind: 'kitchen', desc: 'Keeps milk and vegetables safe for more than a day.' },
+    brida_corner: { name: "Brida's sewing corner", price: 90, comfort: 20, kind: 'memory', desc: 'Her notes, thimble, and green cardigan together.' },
   };
 
   const TRASH_SPOTS = [

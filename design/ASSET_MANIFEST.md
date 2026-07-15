@@ -30,7 +30,8 @@ The PDF's third page is blank and is intentionally not retained. The PDF had no 
 3. Elise portrait sheet: neutral, wry smile, tired, ill/resting, proud; grey strands and work apron.
 4. Elise pixel sheet: serving, cleaning, carrying, resting.
 5. Brida memory portrait sheet: four supplied expressions translated into the game palette.
-6. Bare home tiles: mattress, small table, kitchen corner, worn walls, utensils, storage crate.
+6. Bare home background: one narrow bed, one oil light, empty kitchen counter and basin, worn walls, and clear upgrade spaces. Generated as `assets/home-bare.png`.
+7. Home upgrade props: chair, iron stove, wooden icebox, and Brida sewing chest on a transparent sprite sheet at `assets/home-upgrades.png`.
 7. Shop dirt set: tissue, coffee cup, thread pile, fabric scraps, paper pattern, dust patch.
 8. Management icon set: rent, electricity, food, medicine, coffee, clean, stress, health, comfort, wage.
 9. Order card garment silhouettes: blouse, peplum, gingham dress, repair, custom dress, bulk box.
@@ -59,7 +60,7 @@ Use case: illustration-story. Asset: six-expression visual-novel portrait sheet.
 
 ### Home background
 
-Use case: stylized-concept. Asset: 16:9 game background reference. Primary request: modest old-European apartment in 1972, one mattress/bed, small table, basic kitchen corner, few utensils, worn plaster and wood floor, tidy and cared for, dawn window light. Muted indigo, walnut, cream, and terracotta. Leave a clear walking path and obvious upgrade sockets. No people, no text, no luxury objects, no misery imagery.
+Use case: stylized-concept. Asset: 16:9 playable game background. Primary request: modest old-European apartment in 1972 with exactly one narrow bed, one wall-mounted oil light, bare kitchen counter, empty shelves, wash basin, worn plaster, and wood floor. Leave a clear walking path and obvious appliance/furniture upgrade spaces. No people, text, luxury objects, chairs, tables, decorations, food, dishes, cookware, stove, oven, refrigerator, kettle, or modern technology. Generated with the built-in ChatGPT image-generation tool and curated into `assets/home-bare.png`.
 
 ### Title/shopfront
 
@@ -75,4 +76,3 @@ Use case: historical-scene. Asset: 16:9 title background. Primary request: The G
 - Pixel conversion uses manual cleanup; do not downsample generated paintings blindly.
 - Every runtime bitmap has an optimized WebP/PNG and source provenance entry.
 - Reference images remain excluded from runtime preload and release download where practical.
-

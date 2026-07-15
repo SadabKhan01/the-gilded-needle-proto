@@ -12,6 +12,8 @@ window.G = window.G || {};
     G.loadImages({
       exterior: 'assets/reference/spindle-square-sunny.png',
       interior: 'assets/interior.png',
+      home: 'assets/home-bare.png',
+      home_upgrades: 'assets/home-upgrades.png',
       wardrobe: 'assets/wardrobe.png',
       town_map: 'assets/reference/auberlin-town-map.png',
       marielle_sheet: 'assets/reference/marielle-character-sheet.png',
