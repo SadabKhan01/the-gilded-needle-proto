@@ -1,0 +1,78 @@
+# Art Asset Manifest and Curation Plan
+
+The playable build remains procedural pixel art at 480x270. Supplied high-resolution images are source references and may also support menus/cinematics after optimization. They are not silently mixed into the pixel world.
+
+## Supplied and curated
+
+| File | Role | Keep | Notes |
+|---|---|---:|---|
+| `assets/reference/spindle-square-sunny.png` | shopfront lighting/composition | yes | optimistic title/campaign reference |
+| `assets/reference/spindle-square-overcast.png` | muted palette/facade reference | yes | closer to day-to-day tone |
+| `assets/reference/auberlin-town-map.png` | location and district reference | yes | labels are conceptual, not final UI copy |
+| `assets/reference/grandmother-character-sheet.png` | Brida silhouette/emotions | yes | PDF page 1; green cardigan, bun, glasses |
+| `assets/reference/marielle-character-sheet.png` | Marielle face/hair/dress reference | yes | PDF page 2; choose bottom-right calm expression as base |
+
+The PDF's third page is blank and is intentionally not retained. The PDF had no extractable text.
+
+## Production style lock
+
+- Warm painterly pixel art with readable silhouettes at 16x24 characters.
+- Old European working town: cobbles, brick, plaster, iron lamps, autumn foliage.
+- Muted indigo, moss, terracotta, walnut, cream, plum, and thread-gold accents.
+- Feminine through textiles, flowers, craft, and warmth - not excessive pink or ornament.
+- Working-class areas are maintained, lived-in, and proud; no grime caricature.
+- UI uses linen cards, walnut frames, running-stitch borders, and direct iconography.
+
+## P0 generated/created assets
+
+1. Marielle portrait sheet: neutral, smile, worried, focused, tired, relieved; cream apron and tape sash.
+2. Marielle pixel sheet: four directions, walk, sewing, cleaning, coffee, carrying materials.
+3. Elise portrait sheet: neutral, wry smile, tired, ill/resting, proud; grey strands and work apron.
+4. Elise pixel sheet: serving, cleaning, carrying, resting.
+5. Brida memory portrait sheet: four supplied expressions translated into the game palette.
+6. Bare home tiles: mattress, small table, kitchen corner, worn walls, utensils, storage crate.
+7. Shop dirt set: tissue, coffee cup, thread pile, fabric scraps, paper pattern, dust patch.
+8. Management icon set: rent, electricity, food, medicine, coffee, clean, stress, health, comfort, wage.
+9. Order card garment silhouettes: blouse, peplum, gingham dress, repair, custom dress, bulk box.
+10. Manufacturing Complete card: stitched seal, quality stars, wrapped parcel.
+
+## P1 assets
+
+1. Home secure/warm/shared states and Brida memory corner.
+2. Sheep farm, Weftworks, Ribbon Row store, charity shop, brickworks, and ship-deck tiles/props.
+3. Illustrated district-map overlay with accessible hover labels.
+4. Title/shopfront cinematic using the overcast street palette and sunny image's inviting composition.
+5. Five staff portrait/pixel sets.
+6. Tomas letter portrait cameo, optional and non-carceral in presentation.
+7. Twenty-five customer portraits across age, body, skin tone, class, and disability.
+8. Seasonal exterior overlays and shop-window displays.
+
+## Generation prompt recipes
+
+### Marielle portrait sheet
+
+Use case: illustration-story. Asset: six-expression visual-novel portrait sheet. Primary request: a hardworking 22-year-old European-town tailor, long dark brown hair gathered partly back, large warm brown eyes, practical indigo dress, cream work apron, measuring tape sash. Use the supplied Marielle sheet for identity and the grandmother sheet for family resemblance. Warm ink outlines, parchment background, muted terracotta/indigo/moss palette. Six evenly spaced busts: neutral, small smile, worried, focused, tired, relieved. No text, no watermark, no modern fashion, no glamour pose.
+
+### Elise portrait sheet
+
+Use case: illustration-story. Asset: six-expression visual-novel portrait sheet. Primary request: Marielle's 49-year-old mother and shop partner, dark hair with visible grey, gentle wrinkles, strong hands, tired posture, green-grey dress and cream apron. Warm, dignified, capable. Expressions: neutral, dry amusement, concern, fatigue, resting while ill, proud tears. No hospital imagery, no text, no watermark.
+
+### Home background
+
+Use case: stylized-concept. Asset: 16:9 game background reference. Primary request: modest old-European apartment in 1972, one mattress/bed, small table, basic kitchen corner, few utensils, worn plaster and wood floor, tidy and cared for, dawn window light. Muted indigo, walnut, cream, and terracotta. Leave a clear walking path and obvious upgrade sockets. No people, no text, no luxury objects, no misery imagery.
+
+### Title/shopfront
+
+Use case: historical-scene. Asset: 16:9 title background. Primary request: The Gilded Needle tailor shop on a cobbled old-European square, working neighborhood meeting a graceful flower shop and cafe, warm lamps under an overcast sky, autumn leaves, restrained flowers. Marielle and Elise are small figures opening the door together. Use supplied street images for architecture and palette. Leave negative space in the upper center for a title. No rendered text, no car, no royal palace emphasis, no watermark.
+
+## Curation checklist
+
+- Silhouette reads at target resolution.
+- Aprons and measuring tools identify the profession.
+- Character age and family resemblance remain consistent.
+- No accidental modern objects, illegible text, extra limbs, or costume drift.
+- Background composition preserves walkable/readable areas.
+- Pixel conversion uses manual cleanup; do not downsample generated paintings blindly.
+- Every runtime bitmap has an optimized WebP/PNG and source provenance entry.
+- Reference images remain excluded from runtime preload and release download where practical.
+
