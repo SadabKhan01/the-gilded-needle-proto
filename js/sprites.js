@@ -13,6 +13,59 @@ window.G = window.G || {};
     return c;
   }
 
+  function isWarmBackdrop(r, g, b, a) {
+    return a > 0 && r > 184 && g > 154 && b > 122 && Math.max(r, g, b) - Math.min(r, g, b) < 112;
+  }
+
+  // Remove only warm background pixels connected to the crop edge. This keeps
+  // similarly coloured skin safely enclosed by the character's painted outline.
+  function clearConnectedBackdrop(ctx, w, h) {
+    const image = ctx.getImageData(0, 0, w, h);
+    const data = image.data;
+    const seen = new Uint8Array(w * h);
+    const queue = new Int32Array(w * h);
+    let head = 0, tail = 0;
+    const add = (x, y) => {
+      if (x < 0 || y < 0 || x >= w || y >= h) return;
+      const p = y * w + x;
+      if (seen[p]) return;
+      const i = p * 4;
+      if (!isWarmBackdrop(data[i], data[i + 1], data[i + 2], data[i + 3])) return;
+      seen[p] = 1;
+      queue[tail++] = p;
+    };
+    for (let x = 0; x < w; x++) { add(x, 0); add(x, h - 1); }
+    for (let y = 0; y < h; y++) { add(0, y); add(w - 1, y); }
+    while (head < tail) {
+      const p = queue[head++];
+      const x = p % w, y = Math.floor(p / w);
+      data[p * 4 + 3] = 0;
+      add(x - 1, y); add(x + 1, y); add(x, y - 1); add(x, y + 1);
+    }
+    ctx.putImageData(image, 0, 0);
+  }
+
+  function referenceFrame(img, crop) {
+    const source = document.createElement('canvas');
+    source.width = crop.w; source.height = crop.h;
+    const sg = source.getContext('2d', { willReadFrequently: true });
+    sg.drawImage(img, crop.x, crop.y, crop.w, crop.h, 0, 0, crop.w, crop.h);
+    clearConnectedBackdrop(sg, crop.w, crop.h);
+
+    const c = makeCanvas();
+    const g = c.getContext('2d');
+    const scale = Math.min((BW - 5) / crop.w, (BH - 3) / crop.h);
+    const w = crop.w * scale, h = crop.h * scale;
+    g.drawImage(source, (BW - w) / 2, BH - h, w, h);
+    return c;
+  }
+
+  G.makeReferenceSprite = function (img, crop) {
+    const frame = referenceFrame(img, crop);
+    const set = { front: [frame, frame, frame], back: [frame, frame, frame], w: BW, h: BH, reference: true };
+    return set;
+  };
+
   /* Draw a chibi character. view: 'front' | 'back'. pose: 0 idle, legs offset for walk. */
   function drawChibi(ctx, opts, view, legShift) {
     const { hair, dress, skin, accent } = opts;
@@ -130,8 +183,10 @@ window.G = window.G || {};
 
   G.Sprites = {
     init() {
-      // Mari — brown wavy hair, pink dress, like the wardrobe doll
-      this.mari = G.makeSprite({ hair: '#4a2f1d', dress: '#e9a0b4', skin: '#fbe3cd', accent: '#e2738f' });
+      // Exact supplied character-sheet art. The crop is converted to a transparent
+      // runtime sprite without altering the reference source file.
+      this.mari = G.makeReferenceSprite(G.images.marielle_sheet, { x: 555, y: 105, w: 300, h: 465 });
+      this.elise = G.makeReferenceSprite(G.images.elise_sheet, { x: 565, y: 0, w: 280, h: 485 });
       this.customers = G.CUSTOMER_LOOKS.map(l =>
         G.makeSprite({ hair: l.hair, dress: l.dress, skin: l.skin, accent: '#8a6a3a' }));
     },

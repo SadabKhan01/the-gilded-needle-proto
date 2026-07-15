@@ -44,6 +44,8 @@ html, body {
 #hud .chip.btn:hover { background: rgba(74, 50, 28, 0.94); transform: translateY(-1px); }
 #hud .chip.warning { border-color: #d86b58; background: rgba(92, 42, 31, 0.94); }
 #coins-chip b { color: #f2c14e; font-size: 17px; }
+.map-chip { border-color: #d4ad68 !important; background: rgba(69, 83, 48, 0.94) !important; }
+.map-chip:hover { background: rgba(88, 105, 61, 0.98) !important; }
 
 /* ---------- toasts ---------- */
 #toasts {
@@ -153,6 +155,49 @@ html, body {
 .row button:disabled { opacity: 0.45; cursor: default; }
 .row.done { opacity: 0.55; }
 .empty-note { font-style: italic; color: #8a6a3a; padding: 12px 4px; font-size: 15px; }
+.supply-icon { width: 34px; text-align: center; font-size: 23px; flex: none; }
+.material-list { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 7px; }
+.material-pill {
+  display: inline-block; border-radius: 12px; padding: 3px 8px; font-size: 11px;
+  border: 1px solid #ad8d5c; background: rgba(255,255,255,.35);
+}
+.material-pill.ready { color: #3f6638; border-color: #719267; background: rgba(196,226,182,.48); }
+.material-pill.missing { color: #8b382e; border-color: #b85b4d; background: rgba(245,191,179,.45); }
+
+/* ---------- illustrated town map ---------- */
+.panel.map-panel {
+  width: min(1180px, 97vw); max-height: 94vh; padding: 16px 18px 20px;
+  overflow: auto;
+}
+.town-map {
+  position: relative; width: 100%; aspect-ratio: 1672 / 941; overflow: hidden;
+  border: 3px solid #70502e; border-radius: 12px; background: #b89b6c;
+  box-shadow: inset 0 0 24px rgba(50,30,10,.4);
+}
+.town-map > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; display: block; }
+.map-pin {
+  position: absolute; transform: translate(-50%, -50%); z-index: 2;
+  display: flex; align-items: center; gap: 5px; max-width: 150px;
+  padding: 4px 8px; border: 2px solid #5c3c20; border-radius: 16px;
+  background: rgba(253,243,221,.93); color: #4a300f; box-shadow: 0 3px 8px rgba(35,20,8,.42);
+  font: 12px Georgia, serif; cursor: pointer; white-space: nowrap;
+}
+.map-pin span { font-size: 18px; }
+.map-pin:hover { transform: translate(-50%, -50%) scale(1.08); background: #fff1c9; z-index: 4; }
+.map-pin.current { border-color: #9a4f40; box-shadow: 0 0 0 3px rgba(244,206,119,.7), 0 3px 8px rgba(35,20,8,.42); }
+.panel-back {
+  float: left; margin: 0 10px 8px 0; padding: 4px 10px; border: 1.5px solid #7a5230;
+  border-radius: 9px; background: #efe0bd; color: #5c3c20; font: 13px Georgia, serif; cursor: pointer;
+}
+.family-card { display: grid; grid-template-columns: 150px 1fr; gap: 16px; align-items: center; margin-top: 14px; }
+.family-card p { margin-top: 8px; line-height: 1.45; }
+.elise-portrait {
+  width: 145px; height: 190px; border: 2px solid #8c6a3e; border-radius: 14px;
+  background-image: url('../assets/reference/grandmother-character-sheet.png');
+  background-size: 484px 627px; background-position: -292px 0; background-repeat: no-repeat;
+  background-color: #e9d8bd; box-shadow: inset 0 0 0 3px rgba(255,255,255,.35);
+}
+.story-card { margin-top: 14px; padding: 16px; border: 1.5px dashed #b39058; border-radius: 12px; line-height: 1.55; background: rgba(255,255,255,.3); }
 
 /* scrollbars */
 .panel::-webkit-scrollbar { width: 10px; }
@@ -163,4 +208,10 @@ html, body {
   #hud .chip { padding: 5px 9px; font-size: 12px; }
   #btn-fabrics { display: none; }
   .status-grid { grid-template-columns: 1fr; }
+  .panel.map-panel { padding: 12px 8px; }
+  .map-pin { padding: 3px 5px; }
+  .map-pin b { display: none; }
+  .map-pin span { font-size: 17px; }
+  .family-card { grid-template-columns: 110px 1fr; }
+  .elise-portrait { width: 105px; height: 150px; background-size: 382px 510px; background-position: -230px 0; }
 }

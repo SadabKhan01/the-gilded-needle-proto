@@ -73,9 +73,9 @@ window.G = window.G || {};
     draw(ctx) {
       // cover-fit exterior as backdrop
       const img = G.images.exterior;
-      const s = Math.max(G.W / 1254, G.H / 1254);
+      const s = Math.max(G.W / G.EXTERIOR.w, G.H / G.EXTERIOR.h);
       ctx.filter = 'blur(3px) brightness(0.65) sepia(0.25)';
-      ctx.drawImage(img, (G.W - 1254 * s) / 2, (G.H - 1254 * s) / 2, 1254 * s, 1254 * s);
+      ctx.drawImage(img, (G.W - G.EXTERIOR.w * s) / 2, (G.H - G.EXTERIOR.h * s) / 2, G.EXTERIOR.w * s, G.EXTERIOR.h * s);
       ctx.filter = 'none';
 
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';

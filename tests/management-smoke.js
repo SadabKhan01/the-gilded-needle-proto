@@ -42,6 +42,26 @@ G.resetSave();
 G.Management.ensure();
 assert.equal(G.S.management.day, 1);
 assert.equal(G.S.management.cleanliness, 82);
+assert.equal(G.S.materials.thread, 4);
+
+const dressOrder = {
+  kind: 'sew', status: 'open', name: 'Material test', fabric: 'gingham_red',
+  materials: [{ id: 'thread', qty: 1 }, { id: 'zipper', qty: 1 }],
+};
+G.Orders.add(dressOrder);
+const redBefore = G.S.fabrics.gingham_red;
+const threadBefore = G.S.materials.thread;
+assert.equal(G.Management.orderMaterialStatus(dressOrder).ready, true);
+assert.equal(G.Management.reserveOrderMaterials(dressOrder).ok, true);
+assert.equal(G.S.fabrics.gingham_red, redBefore - 1);
+assert.equal(G.S.materials.thread, threadBefore - 1);
+assert.equal(dressOrder.materialsReserved, true);
+G.Orders.remove(dressOrder);
+
+G.S.coins = 20;
+const laceBefore = G.S.materials.lace;
+assert.equal(G.Management.buySupply('ship_deck', 'material', 'lace').ok, true);
+assert.equal(G.S.materials.lace, laceBefore + 1);
 
 G.Orders.add({ kind: 'sew', status: 'open', name: 'Reload test' });
 const persistedOrderId = G.Orders.list[0].id;
@@ -55,8 +75,9 @@ assert.equal(G.S.orders.length, 0);
 const order = G.Management.enrichOrder({ pay: 20, practice: false });
 assert.equal(order.dueDay, 2);
 assert.equal(order.deposit, 5);
+const coinsBeforeDeposit = G.S.coins;
 G.Management.recordDeposit(order.deposit);
-assert.equal(G.S.coins, 25);
+assert.equal(G.S.coins, coinsBeforeDeposit + 5);
 
 const customer = { state: 'entering' };
 G.Management.onCustomerSpawn(customer);

@@ -99,12 +99,14 @@ window.G = window.G || {};
   // ---------------- order factory ----------------
   G.makeSewOrder = function (name, lookIdx, practice) {
     const fabric = G.pick(Object.keys(G.FABRICS));
-    const garment = G.pick(G.GARMENTS);
-    const pay = practice ? 8 : 12 + Math.floor(Math.random() * 7);
+    const dressWeighted = ['Sunday dress', 'tea gown', 'picnic skirt', 'Sunday dress', 'tea gown'].concat(G.GARMENTS);
+    const garment = G.pick(dressWeighted);
+    const notions = (G.GARMENT_NOTIONS[garment] || ['thread']).map(id => ({ id, qty: 1 }));
+    const pay = practice ? 8 : 18 + notions.length * 3 + Math.floor(Math.random() * 7);
     const text = G.pick(G.SEW_LINES)
       .replace('{garment}', garment)
       .replace('{fabric}', G.FABRICS[fabric].name);
-    const order = { kind: 'sew', name, lookIdx, fabric, garment, pay, text, status: 'open', practice: !!practice };
+    const order = { kind: 'sew', name, lookIdx, fabric, garment, materials: notions, pay, text, status: 'open', practice: !!practice };
     return G.Management ? G.Management.enrichOrder(order) : order;
   };
 
@@ -388,13 +390,13 @@ window.G = window.G || {};
 
     customerAsk() {
       const c = this.customer;
-      const order = Math.random() < 0.5 ? G.makeSewOrder(c.name, c.lookIdx) : G.makeOutfitOrder(c.name, c.lookIdx);
+      const order = Math.random() < 0.72 ? G.makeSewOrder(c.name, c.lookIdx) : G.makeOutfitOrder(c.name, c.lookIdx);
       c.order = order;
       G.Orders.add(order);
       G.Management.recordDeposit(order.deposit);
       const concern = G.Management.customerConcern(order);
       const hint = order.kind === 'sew'
-        ? 'A sewing order! I\'ll take it to a sewing machine. (Check 📜 Orders up top.)'
+        ? 'A made-from-scratch order! I need to collect every listed material, then cut and sew it at a machine. The 🗺 Map leads to suppliers.'
         : 'A ready-made top! I\'ll pick one at a mannequin or the wardrobe rack.';
       G.UI.say(c.name, concern ? [concern, order.text] : [order.text], () => {
         c.state = 'waiting';
@@ -452,12 +454,11 @@ window.G = window.G || {};
           const orders = G.Orders.openSew();
           if (orders.length) {
             const order = orders[0];
-            const have = (G.S.fabrics[order.fabric] || 0) > 0;
-            if (!have) {
-              G.UI.say('Mari', [`I'm out of ${G.FABRICS[order.fabric].name}! I can buy a bolt at the counter ledger. 📒`]);
+            const reservation = G.Management.reserveOrderMaterials(order);
+            if (!reservation.ok) {
+              G.UI.say('Mari', [reservation.message]);
               return;
             }
-            G.S.fabrics[order.fabric] -= 1; G.save();
             G.setMode('sewing', { order, back: 'interior' });
           } else if (h.id === 'cutting') {
             const order = G.makeSewOrder('the practice basket', 0, true);
@@ -465,12 +466,12 @@ window.G = window.G || {};
               `No orders waiting — but practice makes perfect. Grandmother's rule: one seam a day.`,
               `Let's cut a ${order.garment} in ${G.FABRICS[order.fabric].name}.`,
             ], () => {
-              if ((G.S.fabrics[order.fabric] || 0) > 0) {
-                G.S.fabrics[order.fabric] -= 1; G.save();
-                G.Orders.add(order);
+              G.Orders.add(order);
+              const reservation = G.Management.reserveOrderMaterials(order);
+              if (reservation.ok) {
                 G.setMode('sewing', { order, back: 'interior' });
               } else {
-                G.UI.say('Mari', [`...except I have no ${G.FABRICS[order.fabric].name}. The ledger at the counter sells bolts.`]);
+                G.UI.say('Mari', [reservation.message]);
               }
             });
           } else {
@@ -499,6 +500,10 @@ window.G = window.G || {};
             G.UI.say('Mari', [coffee.message]);
             G.UI.updateHUD();
           } else G.UI.say('Mari', G.INTERIOR_FLAVOR.coffee);
+          break;
+
+        case 'mother':
+          G.UI.say('Elise', G.INTERIOR_FLAVOR.mother);
           break;
 
         case 'sofa':
@@ -531,7 +536,7 @@ window.G = window.G || {};
       }
 
       // draw actors in y order
-      const actors = [{ kind: 'player', y: this.player.y }];
+      const actors = [{ kind: 'player', y: this.player.y }, { kind: 'mother', y: 790 }];
       if (this.customer) actors.push({ kind: 'cust', y: this.customer.y });
       actors.sort((a, b) => a.y - b.y);
       for (const a of actors) {
@@ -540,6 +545,12 @@ window.G = window.G || {};
           G.drawSprite(ctx, G.Sprites.mari, v.ox + p.x * v.s, v.oy + p.y * v.s, D.playerH * v.s,
             { walking: p.walking, flip: p.flip, view: p.dir, time: this.t });
         } else {
+          if (a.kind === 'mother') {
+            G.drawSprite(ctx, G.Sprites.elise, v.ox + 610 * v.s, v.oy + 790 * v.s, (D.playerH + 8) * v.s,
+              { walking: false, view: 'front', time: this.t + 1.8 });
+            drawNamePill(ctx, v.ox + 610 * v.s, v.oy + (790 - D.playerH - 20) * v.s, 'Elise · Mother');
+            continue;
+          }
           const c = this.customer;
           G.drawSprite(ctx, G.Sprites.customers[c.lookIdx], v.ox + c.x * v.s, v.oy + c.y * v.s, D.playerH * v.s,
             { walking: c.walking, flip: c.flip, view: c.dir, time: this.t });

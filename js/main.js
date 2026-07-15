@@ -9,13 +9,15 @@ window.G = window.G || {};
     G.bindMouse();
     G.load();
     G.UI.init();
-    G.Sprites.init();
-
     G.loadImages({
-      exterior: 'assets/exterior.png',
+      exterior: 'assets/reference/spindle-square-sunny.png',
       interior: 'assets/interior.png',
       wardrobe: 'assets/wardrobe.png',
+      town_map: 'assets/reference/auberlin-town-map.png',
+      marielle_sheet: 'assets/reference/marielle-character-sheet.png',
+      elise_sheet: 'assets/reference/grandmother-character-sheet.png',
     }, () => {
+      G.Sprites.init();
       G.setMode('title');
       G.start();
     });

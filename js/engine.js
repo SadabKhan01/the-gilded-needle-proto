@@ -123,6 +123,8 @@ window.G = window.G || {};
   const DEFAULT_STATE = () => ({
     coins: 20,
     fabrics: { gingham_red: 3, linen_cream: 2, gingham_blue: 1 },
+    materials: { thread: 4, buttons: 2, lace: 1, ribbon: 1, zipper: 1 },
+    currentLocation: 'tailor',
     upgrades: {},
     ordersDone: 0,
     orders: [],

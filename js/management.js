@@ -76,6 +76,7 @@ window.G = window.G || {};
 
     enrichOrder(order) {
       const m = this.ensure();
+      if (!Array.isArray(order.materials)) order.materials = [];
       order.acceptedDay = m.day;
       order.dueDay = m.day + (order.practice ? 0 : 1);
       order.patience = 100;
@@ -83,6 +84,58 @@ window.G = window.G || {};
       order.cleanlinessSensitivity = Math.random() < 0.35 ? 'high' : 'normal';
       order.deposit = order.practice ? 0 : Math.max(2, Math.round(order.pay * 0.25));
       return order;
+    },
+
+    orderRequirements(order) {
+      const requirements = [];
+      if (order && order.kind === 'sew' && order.fabric) {
+        requirements.push({ type: 'fabric', id: order.fabric, qty: 1, name: G.FABRICS[order.fabric].name, icon: '🧶' });
+        (order.materials || []).forEach(req => {
+          const def = G.MATERIALS[req.id];
+          if (def) requirements.push({ type: 'material', id: req.id, qty: req.qty || 1, name: def.name, icon: def.icon });
+        });
+      }
+      return requirements;
+    },
+
+    orderMaterialStatus(order) {
+      const requirements = this.orderRequirements(order);
+      const rows = requirements.map(req => {
+        const stock = req.type === 'fabric' ? (G.S.fabrics[req.id] || 0) : (G.S.materials[req.id] || 0);
+        return Object.assign({}, req, { stock, ready: stock >= req.qty });
+      });
+      return { ready: rows.every(row => row.ready), rows, missing: rows.filter(row => !row.ready) };
+    },
+
+    reserveOrderMaterials(order) {
+      if (order.materialsReserved) return { ok: true, message: 'Materials are already cut and reserved.' };
+      const status = this.orderMaterialStatus(order);
+      if (!status.ready) {
+        return { ok: false, message: 'Missing ' + status.missing.map(row => `${row.name} (${row.stock}/${row.qty})`).join(', ') + '. Open the town map to visit a supplier.' };
+      }
+      status.rows.forEach(req => {
+        if (req.type === 'fabric') G.S.fabrics[req.id] -= req.qty;
+        else G.S.materials[req.id] -= req.qty;
+      });
+      order.materialsReserved = true;
+      order.status = 'cutting';
+      G.Orders.persist();
+      return { ok: true, message: 'Cloth and notions reserved for the order.' };
+    },
+
+    buySupply(supplierId, type, itemId) {
+      const supplier = G.SUPPLIERS[supplierId];
+      const catalog = type === 'fabric' ? supplier && supplier.fabrics : supplier && supplier.materials;
+      const def = type === 'fabric' ? G.FABRICS[itemId] : G.MATERIALS[itemId];
+      if (!supplier || !def || !catalog.includes(itemId)) return { ok: false, message: 'That supplier does not carry this item.' };
+      const price = Math.max(1, Math.ceil(def.price * supplier.modifier));
+      if (G.S.coins < price) return { ok: false, message: `You need 🪙${price} for ${def.name}.` };
+      G.S.coins -= price;
+      const shelf = type === 'fabric' ? G.S.fabrics : G.S.materials;
+      shelf[itemId] = (shelf[itemId] || 0) + 1;
+      this.ensure().daily.expenses += price;
+      G.save();
+      return { ok: true, message: `${def.name} added to the work basket.`, price };
     },
 
     onCustomerSpawn(customer) {

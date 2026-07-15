@@ -47,12 +47,12 @@ Issues are ordered for a layered build. Each item is small enough to become a Gi
 
 ## Milestone 3 - town and procurement
 
-- [ ] GN-301 P0 Rebuild city portals to match the supplied town map's readable district structure.
-- [ ] GN-302 P0 Add sheep farm procurement map and wool supplier.
-- [ ] GN-303 P0 Reframe Weftworks as muslin/cotton supplier with salvage and purchase routes.
-- [ ] GN-304 P0 Add Ribbon Row fabric store and notions catalog.
-- [ ] GN-305 P0 Reframe Madder docks as ship-deck import market.
-- [ ] GN-306 P1 Add charity store with inconsistent discounted bundles.
+- [x] GN-301 P0 Rebuild city portals to match the supplied town map's readable district structure.
+- [x] GN-302 P0 Add sheep farm procurement map and wool supplier.
+- [x] GN-303 P0 Reframe Weftworks as muslin/cotton supplier with salvage and purchase routes.
+- [x] GN-304 P0 Add Ribbon Row fabric store and notions catalog.
+- [x] GN-305 P0 Reframe Madder docks as ship-deck import market.
+- [x] GN-306 P1 Add charity store with inconsistent discounted bundles.
 - [ ] GN-307 P1 Add Ashford Brickworks story location and workwear questline.
 - [ ] GN-308 P1 Add supplier stock calendars, price bands, and relationship discounts.
 - [ ] GN-309 P1 Add material reservation and provenance fields.
@@ -65,7 +65,7 @@ Issues are ordered for a layered build. Each item is small enough to become a Gi
 - [ ] GN-403 P0 Add fabric substitution rules and customer consent.
 - [ ] GN-404 P1 Port wardrobe visual-matching minigame from `codex/proto-checkpoint`.
 - [ ] GN-405 P1 Add pattern-layout/cutting minigame.
-- [ ] GN-406 P1 Add finishing notions: buttons, zippers, lace, ribbon, thread.
+- [x] GN-406 P1 Add finishing notions: buttons, zippers, lace, ribbon, thread.
 - [ ] GN-407 P1 Add fitting correction loop.
 - [ ] GN-408 P2 Add 40-garment content catalog and seasonal styles.
 
@@ -83,12 +83,12 @@ Issues are ordered for a layered build. Each item is small enough to become a Gi
 ## Milestone 6 - art, audio, and UX
 
 - [x] GN-601 P0 Curate supplied town and character references into the repository.
-- [ ] GN-602 P0 Produce final Marielle working sprite/portrait based on the supplied sheet.
+- [x] GN-602 P0 Produce final Marielle working sprite/portrait based on the supplied sheet.
 - [ ] GN-603 P0 Produce Elise and Brida portrait/emotion sheets.
 - [ ] GN-604 P0 Produce home bare/secure/warm visual states.
 - [ ] GN-605 P0 Add shop dirt, coffee, order, bill, health, stress, and comfort icons.
-- [ ] GN-606 P1 Add illustrated district-map overlay based on supplied map.
-- [ ] GN-607 P1 Add cinematic shopfront/title art consistent with supplied street references.
+- [x] GN-606 P1 Add illustrated district-map overlay based on supplied map.
+- [x] GN-607 P1 Add cinematic shopfront/title art consistent with supplied street references.
 - [ ] GN-608 P1 Add mother, home, brickworks, and letter musical motifs.
 - [ ] GN-609 P1 Add mobile/touch layout and responsive UI.
 - [ ] GN-610 P1 Add localization-safe layout and externalized narrative strings.

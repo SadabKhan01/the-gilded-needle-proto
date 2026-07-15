@@ -30,10 +30,14 @@ then open http://localhost:8642. No build step, no dependencies.
 
 | Feature | Where |
 |---|---|
-| Exterior scene | shop front — door, chalkboard, sign, windows, lavender, Mr. Buttons the sparrow |
+| Exterior scene | supplied sunny Spindle Square painting with the tailor shop, fountain, carriage, and flower conservatory |
 | Interior scene | full walkable shop with furniture collision + vertical camera |
+| Illustrated characters | Mari and Elise are runtime cutouts from the supplied character-sheet references |
+| Town navigation | top-left map bar opens the supplied Auberlin map with eight clickable destinations |
 | Customers | doorbell rings, customer walks to the counter, places a persistent sew or outfit order |
-| Sewing mini-game | cut the pins in order, then time the stitches — quality affects pay |
+| Custom garment orders | collect cloth, thread, buttons, lace, ribbon, or zippers before cutting and sewing |
+| Sewing mini-game | reserve materials, cut the pins in order, then time the stitches — quality affects pay |
+| Suppliers | sheep farm, muslin works, Ribbon Row, charity store, and ship-deck market |
 | Wardrobe mini-game | dress-up screen over the wardrobe painting; find the requested top |
 | Shop management | coins, fabric bolts, order book, ledger with fabric purchases + 3 upgrades |
 | Daily pressure | cleanliness, coffee stock, stress, rent, electricity, food, fair wages |
@@ -45,7 +49,7 @@ then open http://localhost:8642. No build step, no dependencies.
 - `js/engine.js` — canvas, input, WebAudio synth, save/load, mode loop
 - `js/data.js` — all content: hotspot coordinates (image space), wardrobe catalog, fabrics, dialogue, memories
 - `js/management.js` — clock, bills, cleanliness, coffee, home comfort, staffing and mother health
-- `js/sprites.js` — procedural chibi sprites (Mari + customers)
+- `js/sprites.js` — supplied-sheet cutout sprites for Mari/Elise plus procedural customers
 - `js/scenes.js` — exterior/interior modes, movement, collision, customer flow
 - `js/minigames.js` — title, intro, flashbacks, wardrobe dress-up, sewing game
 - `js/ui.js` — DOM HUD, dialogue box, panels, toasts, order book

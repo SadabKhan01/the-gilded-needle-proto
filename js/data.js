@@ -1,7 +1,7 @@
 'use strict';
 /* The Gilded Needle prototype — content data.
    All positions are in IMAGE-SPACE pixels of the background art:
-   exterior.png 1254x1254, interior.png 941x1672, wardrobe.png 1122x1402. */
+   Spindle Square 1672x941, interior.png 941x1672, wardrobe.png 1122x1402. */
 window.G = window.G || {};
 
 (function () {
@@ -15,9 +15,69 @@ window.G = window.G || {};
     plaid_green:    { name: 'Green Plaid',     color: '#5d7a45', alt: '#e4e8d2', price: 7 },
     linen_cream:    { name: 'Cream Linen',     color: '#e8dcc0', alt: '#f6efdd', price: 4 },
     cotton_lavender:{ name: 'Lavender Cotton', color: '#9a86b8', alt: '#efe9f6', price: 7 },
+    wool_sage:      { name: 'Sage Wool',       color: '#71845f', alt: '#e3e6d5', price: 9 },
+    silk_rose:      { name: 'Rose Silk',       color: '#b96f7e', alt: '#fae5e8', price: 12 },
   };
 
   G.GARMENTS = ['Sunday dress', 'work apron', 'waistcoat', 'summer blouse', 'winter shawl', 'tea gown', 'picnic skirt'];
+
+  G.MATERIALS = {
+    thread:  { name: 'Strong Thread', icon: '🧵', price: 2 },
+    buttons: { name: 'Button Card', icon: '🔘', price: 3 },
+    lace:    { name: 'Lace Trim', icon: '〰️', price: 4 },
+    ribbon:  { name: 'Ribbon Roll', icon: '🎀', price: 3 },
+    zipper:  { name: 'Dress Zipper', icon: '🤐', price: 4 },
+  };
+
+  G.GARMENT_NOTIONS = {
+    'Sunday dress': ['thread', 'lace', 'zipper'],
+    'work apron': ['thread', 'buttons'],
+    'waistcoat': ['thread', 'buttons'],
+    'summer blouse': ['thread', 'buttons'],
+    'winter shawl': ['thread', 'ribbon'],
+    'tea gown': ['thread', 'lace', 'ribbon'],
+    'picnic skirt': ['thread', 'zipper'],
+  };
+
+  // Positions are percentages over the supplied illustrated town map.
+  G.MAP_LOCATIONS = [
+    { id: 'tailor', title: 'The Gilded Needle', icon: '🪡', x: 39, y: 48, action: 'tailor', note: 'Return to Mari and Elise at Spindle Square.' },
+    { id: 'sheep_farm', title: 'Sheep Farm', icon: '🐑', x: 17, y: 21, supplier: 'sheep_farm', note: 'Local wool and sturdy green plaid.' },
+    { id: 'muslin_factory', title: 'Muslin Factory', icon: '🏭', x: 46, y: 12, supplier: 'muslin_factory', note: 'Cotton, linen, and dependable thread.' },
+    { id: 'fabric_store', title: 'Ribbon Row Fabrics', icon: '🧶', x: 35, y: 43, supplier: 'fabric_store', note: 'Everyday cloth, buttons, ribbon, and zippers.' },
+    { id: 'charity_store', title: 'Charity Store', icon: '♻️', x: 54, y: 42, supplier: 'charity_store', note: 'Small discounted bundles with limited choice.' },
+    { id: 'brickworks', title: 'Ashford Brickworks', icon: '🧱', x: 82, y: 14, action: 'brickworks', note: 'The old works where Mari and Elise saved for the shop.' },
+    { id: 'home', title: 'Thimm Family Home', icon: '🏠', x: 44, y: 69, action: 'home', note: 'Check on Mother and the comfort of home.' },
+    { id: 'ship_deck', title: 'Ship Deck Market', icon: '⚓', x: 84, y: 78, supplier: 'ship_deck', note: 'Imported silk, lace, ribbon, and fine fastenings.' },
+  ];
+
+  G.SUPPLIERS = {
+    sheep_farm: {
+      title: 'Briar Sheep Farm', portrait: '🐑', modifier: 0.9,
+      desc: 'Farm wool is strong, warm, and cheaper when Mari makes the trip herself.',
+      fabrics: ['wool_sage', 'plaid_green'], materials: ['thread'],
+    },
+    muslin_factory: {
+      title: 'Auberlin Muslin Works', portrait: '🏭', modifier: 0.9,
+      desc: 'Factory ends and dependable bolts for everyday commissions.',
+      fabrics: ['linen_cream', 'cotton_lavender', 'gingham_blue'], materials: ['thread', 'buttons'],
+    },
+    fabric_store: {
+      title: 'Ribbon Row Fabrics', portrait: '🧶', modifier: 1,
+      desc: 'The broadest practical selection in town, sold one dress-length at a time.',
+      fabrics: ['gingham_red', 'gingham_blue', 'gingham_pink', 'plaid_brown', 'plaid_green'], materials: ['thread', 'buttons', 'ribbon', 'zipper'],
+    },
+    charity_store: {
+      title: 'Second Stitch Charity Shop', portrait: '♻️', modifier: 0.7,
+      desc: 'Donated remnants are inexpensive, but the selection is never guaranteed.',
+      fabrics: ['gingham_red', 'plaid_brown', 'linen_cream'], materials: ['buttons', 'lace'],
+    },
+    ship_deck: {
+      title: 'Madder Quay Imports', portrait: '⚓', modifier: 1.25,
+      desc: 'Fine imported cloth and finishing notions for customers who expect something special.',
+      fabrics: ['silk_rose', 'cotton_lavender'], materials: ['lace', 'ribbon', 'zipper'],
+    },
+  };
 
   // ---------- upgrades ----------
   G.UPGRADES = {
@@ -85,7 +145,7 @@ window.G = window.G || {};
   ];
 
   G.SEW_LINES = [
-    'Could you sew me a {garment} from {fabric}? Nothing fancy — just made with care.',
+    'I need a {garment} made from scratch in {fabric}. I know it is not ready yet — could you sew it for me?',
     'My old {garment} finally gave up. A new one in {fabric}, please?',
     "I saw your window and thought: {fabric}! A {garment}, if you'd be so kind.",
     'The fair is on Sunday and I have nothing to wear. A {garment} in {fabric}?',
@@ -147,22 +207,22 @@ window.G = window.G || {};
     'Help Mari and Elise serve customers, keep the lights on, care for their home, and turn Brida\'s lessons into a future.',
   ];
 
-  // ---------- EXTERIOR scene (exterior.png 1254x1254) ----------
+  // ---------- EXTERIOR scene (supplied Spindle Square artwork 1672x941) ----------
   G.EXTERIOR = {
     img: 'exterior',
-    w: 1254, h: 1254,
-    groundY: 1168,          // player's feet line
-    minX: 70, maxX: 1190,
-    playerH: 165,
-    start: { x: 200 },
+    w: 1672, h: 941,
+    groundY: 858,          // player's feet line
+    minX: 55, maxX: 1615,
+    playerH: 142,
+    start: { x: 610 },
     hotspots: [
-      { id: 'door', label: 'Enter the shop', x: 640, y: 1130, r: 120, icon: '🚪' },
-      { id: 'chalkboard', label: 'Read the chalkboard', x: 295, y: 1140, r: 95, icon: '📋' },
-      { id: 'sign', label: 'Admire the sign', x: 232, y: 1100, r: 80, icon: '🪧' },
-      { id: 'window_left', label: 'Peek in the window', x: 440, y: 1120, r: 95, icon: '🧵' },
-      { id: 'window_right', label: 'Peek at the fabrics', x: 865, y: 1120, r: 95, icon: '🧶' },
-      { id: 'lavender', label: 'Smell the lavender', x: 1060, y: 1150, r: 95, icon: '💐' },
-      { id: 'bird', label: 'Greet the sparrow', x: 150, y: 1120, r: 80, icon: '🐦' },
+      { id: 'door', label: 'Enter the tailor shop', x: 360, y: 805, r: 110, icon: '🚪' },
+      { id: 'chalkboard', label: 'Read the chalkboard', x: 125, y: 815, r: 85, icon: '📋' },
+      { id: 'sign', label: 'Admire the tailor sign', x: 92, y: 610, r: 78, icon: '🪧' },
+      { id: 'window_left', label: 'Study the window display', x: 220, y: 780, r: 90, icon: '🧵' },
+      { id: 'carriage', label: 'Watch the carriage', x: 715, y: 790, r: 105, icon: '🐴' },
+      { id: 'fountain', label: 'Rest by the fountain', x: 1010, y: 820, r: 115, icon: '⛲' },
+      { id: 'flowers', label: 'Visit the flower conservatory', x: 1470, y: 790, r: 115, icon: '💐' },
     ],
   };
 
@@ -170,9 +230,9 @@ window.G = window.G || {};
     chalkboard: ['"Custom Fit — Timeless Style." Mother held the board while I chalked it. Both our hands were shaking a little.'],
     sign: ['My own sign. Six years of brick dust bought that little painted coat.', 'Grandmother Brida\'s thimble is buried in the mortar under it. For luck.'],
     window_left: ['The display suit took me three weeks. The Duke himself couldn\'t buy it — it\'s not for sale.'],
-    window_right: ['Bolts of gingham and good wool plaid. Every one chosen at the Ribbon Row market at dawn.'],
-    lavender: ['Lavender keeps the moths from the wool — and it smells like a promise.'],
-    bird: ['The sparrow was here the day I signed the lease. I call him Mr. Buttons.', 'Mr. Buttons tilts his head. No crumbs today, sir — paying customers first.'],
+    carriage: ['A delivery carriage from Madder Quay. Perhaps there is rose silk on board — if the order book can justify it.'],
+    fountain: ['Spindle Square looks grand in the sunlight. Grandmother would have called it showing off. Mother simply calls it beautiful.'],
+    flowers: ['The conservatory is full of climbing roses. Elise trades coffee grounds for bruised blooms at closing time.'],
   };
 
   // ---------- INTERIOR scene (interior.png 941x1672) ----------
@@ -216,6 +276,7 @@ window.G = window.G || {};
       { id: 'rack', label: 'Browse the wardrobe', x: 800, y: 545, r: 100, icon: '👚' },
       { id: 'counter', label: 'Shop ledger', x: 600, y: 1240, r: 95, icon: '📒' },
       { id: 'coffee', label: 'Coffee corner', x: 590, y: 500, r: 90, icon: '☕' },
+      { id: 'mother', label: 'Talk to Mother', x: 610, y: 790, r: 90, icon: '💚' },
       { id: 'sofa', label: 'Rest on the sofa', x: 320, y: 520, r: 95, icon: '🛋️' },
       { id: 'hearth', label: 'The hearth', x: 300, y: 300, r: 95, icon: '🔥' },
       { id: 'painting', label: 'Framed picture', x: 860, y: 420, r: 85, icon: '🖼️' },
@@ -225,6 +286,7 @@ window.G = window.G || {};
 
   G.INTERIOR_FLAVOR = {
     coffee: ['Cheap coffee keeps waiting customers warm. Mother calls it good business. Grandmother would have asked for two sugars.'],
+    mother: ['Elise smooths her apron. "Do not promise a dress until you have counted the thread as well as the cloth, Mari."', '"Use the town map when the shelves run low. A good order starts before the first cut."'],
     hearth_after: ['The fire pops. The brick dust is behind me now — but I keep a few rough bricks by the hearth, so I never forget the weight of them.'],
     sofa_after: ['I could almost hear her: "Watch the needle, Mari, not your fingers."'],
     painting_after: ['Mother in cream linen. The best seam I ever closed.'],

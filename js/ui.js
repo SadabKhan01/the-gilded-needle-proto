@@ -34,7 +34,7 @@ window.G = window.G || {};
       this.list = this.list.filter(x => x !== o && x.id !== o.id);
       this.persist();
     },
-    openSew() { return this.list.filter(o => o.kind === 'sew' && o.status === 'open'); },
+    openSew() { return this.list.filter(o => o.kind === 'sew' && (o.status === 'open' || o.status === 'cutting')); },
     openOutfit() { return this.list.filter(o => o.kind === 'outfit' && o.status === 'open'); },
   };
 
@@ -50,6 +50,7 @@ window.G = window.G || {};
       ui = $('#ui');
       ui.innerHTML = `
         <div id="hud" style="display:none">
+          <div class="chip btn map-chip" id="btn-map">🗺 <b>Map</b></div>
           <div class="chip" id="coins-chip">🪙 <b>0</b></div>
           <div class="chip" id="day-chip">Day <b>1</b> · 8:00</div>
           <div class="chip btn" id="btn-orders">📜 Orders <b id="order-count">0</b></div>
@@ -64,6 +65,7 @@ window.G = window.G || {};
         </div>`;
       hud = $('#hud'); dlg = $('#dialogue'); toasts = $('#toasts');
 
+      $('#btn-map').addEventListener('click', () => this.openMapPanel());
       $('#btn-orders').addEventListener('click', () => this.openOrdersPanel());
       $('#btn-fabrics').addEventListener('click', () => this.openFabricsPanel());
       $('#btn-condition').addEventListener('click', () => this.openLedgerPanel());
@@ -182,12 +184,15 @@ window.G = window.G || {};
       let rows = '';
       if (!G.Orders.list.length) rows = `<div class="empty-note">No orders yet. Wait for the doorbell — or take practice work at the cutting table.</div>`;
       G.Orders.list.forEach(o => {
+        const materialStatus = o.kind === 'sew' ? G.Management.orderMaterialStatus(o) : null;
+        const materialList = materialStatus ? materialStatus.rows.map(req =>
+          `<span class="material-pill ${req.ready || o.materialsReserved ? 'ready' : 'missing'}">${req.icon} ${req.name} ${o.materialsReserved ? 'reserved' : `${req.stock}/${req.qty}`}</span>`).join('') : '';
         const what = o.kind === 'sew'
           ? `Sew a <b>${o.garment}</b> in <b>${G.FABRICS[o.fabric].name}</b>`
           : `Pick a top: <b>${o.wantText}</b>`;
         const whereNote = o.kind === 'sew' ? 'use a sewing machine' : 'use a mannequin or the wardrobe';
         rows += `<div class="row ${o.status === 'sewn' ? 'done' : ''}">
-          <div class="grow">${what}<div class="meta">for ${o.name} — quote 🪙${o.pay}, deposit 🪙${o.deposit || 0} — due day ${o.dueDay || '?'} — ${whereNote}</div></div>
+          <div class="grow">${what}<div class="meta">for ${o.name} — quote 🪙${o.pay}, deposit 🪙${o.deposit || 0} — due day ${o.dueDay || '?'} — ${whereNote}</div>${materialList ? `<div class="material-list">${materialList}</div>` : ''}</div>
         </div>`;
       });
       this._openPanel(`<h2>📜 Order Book</h2><div class="sub">Orders completed so far: ${G.S.ordersDone}</div>${rows}`);
@@ -204,7 +209,75 @@ window.G = window.G || {};
           <b>× ${G.S.fabrics[k]}</b>
         </div>`;
       });
-      this._openPanel(`<h2>🧵 Fabric Shelf</h2><div class="sub">Sewing an order uses one matching bolt.</div>${rows}`);
+      const notions = Object.keys(G.MATERIALS).map(k => {
+        const item = G.MATERIALS[k];
+        return `<div class="row"><div class="supply-icon">${item.icon}</div><div class="grow">${item.name}<div class="meta">finishing material</div></div><b>× ${G.S.materials[k] || 0}</b></div>`;
+      }).join('');
+      this._openPanel(`<h2>🧵 Workroom Materials</h2><div class="sub">Custom garments need cloth plus every listed notion. Use the town map to restock.</div>${rows}<h2 class="section-title">Notions</h2>${notions}`);
+    },
+
+    openMapPanel() {
+      const pins = G.MAP_LOCATIONS.map(loc =>
+        `<button class="map-pin ${G.S.currentLocation === loc.id ? 'current' : ''}" data-map-location="${loc.id}" style="left:${loc.x}%;top:${loc.y}%" title="${loc.note}"><span>${loc.icon}</span><b>${loc.title}</b></button>`).join('');
+      const el = this._openPanel(
+        `<h2>🗺 Auberlin Town Map</h2><div class="sub">Choose a destination. Suppliers sell the cloth and notions required by made-from-scratch orders.</div>
+         <div class="town-map"><img src="assets/reference/auberlin-town-map.png" alt="Illustrated Auberlin town map">${pins}</div>`);
+      el.classList.add('map-panel');
+      el.querySelectorAll('[data-map-location]').forEach(pin => pin.addEventListener('click', () => this.openMapLocation(pin.dataset.mapLocation)));
+    },
+
+    openMapLocation(id) {
+      const location = G.MAP_LOCATIONS.find(loc => loc.id === id);
+      if (!location) return;
+      G.S.currentLocation = id;
+      G.save();
+      if (location.action === 'tailor') {
+        this.closePanel();
+        G.transition(() => G.setMode('exterior', { fromDoor: true }));
+      } else if (location.action === 'home') this.openHomePanel();
+      else if (location.action === 'brickworks') this.openBrickworksPanel();
+      else if (location.supplier) this.openSupplierPanel(location.supplier);
+    },
+
+    openSupplierPanel(supplierId) {
+      const supplier = G.SUPPLIERS[supplierId];
+      if (!supplier) return;
+      const itemRow = (type, id) => {
+        const def = type === 'fabric' ? G.FABRICS[id] : G.MATERIALS[id];
+        const price = Math.max(1, Math.ceil(def.price * supplier.modifier));
+        const stock = type === 'fabric' ? (G.S.fabrics[id] || 0) : (G.S.materials[id] || 0);
+        return `<div class="row">${type === 'fabric' ? `<div class="swatch" style="${this.swatchStyle(id)}"></div>` : `<div class="supply-icon">${def.icon}</div>`}<div class="grow">${def.name}<div class="meta">workroom stock × ${stock}</div></div><button data-buy-supply="${type}:${id}" ${G.S.coins < price ? 'disabled' : ''}>🪙 ${price}</button></div>`;
+      };
+      const fabrics = supplier.fabrics.map(id => itemRow('fabric', id)).join('');
+      const materials = supplier.materials.map(id => itemRow('material', id)).join('');
+      const el = this._openPanel(
+        `<button class="panel-back" data-back-map>← Map</button><h2>${supplier.portrait} ${supplier.title}</h2><div class="sub">${supplier.desc}</div>
+         <h2 class="section-title">Cloth</h2>${fabrics}<h2 class="section-title">Notions</h2>${materials}`);
+      el.querySelector('[data-back-map]').addEventListener('click', () => this.openMapPanel());
+      el.querySelectorAll('[data-buy-supply]').forEach(button => button.addEventListener('click', () => {
+        const [type, id] = button.dataset.buySupply.split(':');
+        const result = G.Management.buySupply(supplierId, type, id);
+        G.Audio.play(result.ok ? 'coin' : 'error');
+        this.toast(result.message);
+        this.updateHUD();
+        this.openSupplierPanel(supplierId);
+      }));
+    },
+
+    openHomePanel() {
+      const m = G.Management.ensure();
+      const owned = Object.keys(G.Management.homeItems).filter(id => m.home[id]).map(id => G.Management.homeItems[id].name);
+      const el = this._openPanel(
+        `<button class="panel-back" data-back-map>← Map</button><h2>🏠 Thimm Family Home</h2><div class="sub">A small place made safer one paid bill and one useful object at a time.</div>
+         <div class="family-card"><div class="elise-portrait"></div><div><b>Elise Thimm · Mother</b><p>${G.Management.motherLabel()} · health ${Math.round(m.mother.health)}%</p><p>Home comfort ${m.homeComfort}. ${owned.length ? 'At home: ' + owned.join(', ') + '.' : 'The rooms are still almost bare.'}</p></div></div>`);
+      el.querySelector('[data-back-map]').addEventListener('click', () => this.openMapPanel());
+    },
+
+    openBrickworksPanel() {
+      const el = this._openPanel(
+        `<button class="panel-back" data-back-map>← Map</button><h2>🧱 Ashford Brickworks</h2><div class="sub">The chimneys are still visible from every road into Auberlin.</div>
+         <div class="story-card">Mari and Elise carried bricks here while the tea-tin savings slowly grew. The works now supplies sturdy customers who need aprons, waistcoats, and repairable clothes—not a punishment loop, but part of the family's history.</div>`);
+      el.querySelector('[data-back-map]').addEventListener('click', () => this.openMapPanel());
     },
 
     openLedgerPanel() {
