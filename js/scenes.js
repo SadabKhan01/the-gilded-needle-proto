@@ -104,7 +104,8 @@ window.G = window.G || {};
     const text = G.pick(G.SEW_LINES)
       .replace('{garment}', garment)
       .replace('{fabric}', G.FABRICS[fabric].name);
-    return { kind: 'sew', name, lookIdx, fabric, garment, pay, text, status: 'open', practice: !!practice };
+    const order = { kind: 'sew', name, lookIdx, fabric, garment, pay, text, status: 'open', practice: !!practice };
+    return G.Management ? G.Management.enrichOrder(order) : order;
   };
 
   G.makeOutfitOrder = function (name, lookIdx) {
@@ -114,7 +115,8 @@ window.G = window.G || {};
     if (Math.random() < 0.4) { want.style = top.style; wantText = `a ${top.color} ${top.pattern} ${top.style} top`; }
     const pay = 10 + Math.floor(Math.random() * 5);
     const text = G.pick(G.OUTFIT_LINES).replace('{want}', wantText);
-    return { kind: 'outfit', name, lookIdx, want, wantText, pay, text, status: 'open' };
+    const order = { kind: 'outfit', name, lookIdx, want, wantText, pay, text, status: 'open' };
+    return G.Management ? G.Management.enrichOrder(order) : order;
   };
 
   // ---------------- EXTERIOR ----------------
@@ -275,6 +277,8 @@ window.G = window.G || {};
       this.t += dt;
       G.updateFade(dt);
       this.updateCustomer(dt);
+      G.Management.tick(dt, this.customer);
+      G.UI.updateHUD();
       if (G.UI.busy() || G.Fade.dir !== 0) { this.player.walking = false; return; }
 
       const p = this.player, v = this.view();
@@ -316,7 +320,7 @@ window.G = window.G || {};
     hotspotNear() {
       const p = this.player;
       let best = null, bd = 1e9;
-      for (const h of G.INTERIOR.hotspots) {
+      for (const h of this.allHotspots()) {
         const d = G.dist(p.x, p.y, h.x, h.y);
         if (d < h.r + 40 && d < bd) { bd = d; best = h; }
       }
@@ -325,11 +329,15 @@ window.G = window.G || {};
 
     hotspotAt(ix, iy) {
       let best = null, bd = 1e9;
-      for (const h of G.INTERIOR.hotspots) {
+      for (const h of this.allHotspots()) {
         const d = G.dist(ix, iy, h.x, h.y);
         if (d < h.r && d < bd) { bd = d; best = h; }
       }
       return best;
+    },
+
+    allHotspots() {
+      return G.INTERIOR.hotspots.concat(G.Management.trashHotspots());
     },
 
     // ---------- customer flow ----------
@@ -372,6 +380,7 @@ window.G = window.G || {};
         wp: [{ x: 590, y: 1400 }, { x: D.counterSpot.x, y: D.counterSpot.y }],
         order: null,
       };
+      G.Management.onCustomerSpawn(this.customer);
       G.Audio.play('bell');
       G.UI.toast(`🔔 The doorbell! ${name} steps in.`);
     },
@@ -381,10 +390,12 @@ window.G = window.G || {};
       const order = Math.random() < 0.5 ? G.makeSewOrder(c.name, c.lookIdx) : G.makeOutfitOrder(c.name, c.lookIdx);
       c.order = order;
       G.Orders.add(order);
+      G.Management.recordDeposit(order.deposit);
+      const concern = G.Management.customerConcern(order);
       const hint = order.kind === 'sew'
         ? 'A sewing order! I\'ll take it to a sewing machine. (Check 📜 Orders up top.)'
         : 'A ready-made top! I\'ll pick one at a mannequin or the wardrobe rack.';
-      G.UI.say(c.name, [order.text], () => {
+      G.UI.say(c.name, concern ? [concern, order.text] : [order.text], () => {
         c.state = 'waiting';
         G.UI.say('Mari', [hint]);
       });
@@ -392,11 +403,14 @@ window.G = window.G || {};
 
     /* called by minigames when an order is finished */
     orderCompleted(order, quality) {
-      const pay = G.payFor(order.pay, quality);
+      const pay = Math.max(0, G.payFor(order.pay, quality) - (order.deposit || 0));
       G.S.coins += pay;
       G.S.ordersDone += 1;
+      order.status = 'complete';
+      G.Management.onOrderComplete(order, quality, pay);
       G.Orders.remove(order);
       G.save();
+      G.UI.toast('✨ MANUFACTURING COMPLETE · ' + quality.toUpperCase());
       const qWord = quality === 'perfect' ? 'Perfect work!' : quality === 'fine' ? 'Fine work.' : 'A bit rough... but it\'ll do.';
       const c = this.customer;
       if (c && c.order === order) {
@@ -423,6 +437,10 @@ window.G = window.G || {};
     // ---------- interactions ----------
     interact(h) {
       G.Audio.play('click');
+      if (h.id.indexOf('trash:') === 0) {
+        G.Management.cleanTrash(h.id.slice(6));
+        return;
+      }
       switch (h.id) {
         case 'exit':
           G.Audio.play('door');
@@ -475,7 +493,11 @@ window.G = window.G || {};
           break;
 
         case 'coffee':
-          G.UI.say('Mari', G.INTERIOR_FLAVOR.coffee);
+          if (this.customer && this.customer.state === 'waiting') {
+            const coffee = G.Management.serveCoffee(this.customer);
+            G.UI.say('Mari', [coffee.message]);
+            G.UI.updateHUD();
+          } else G.UI.say('Mari', G.INTERIOR_FLAVOR.coffee);
           break;
 
         case 'sofa':
@@ -501,7 +523,7 @@ window.G = window.G || {};
       ctx.drawImage(G.images[D.img], v.ox, v.oy, D.w * v.s, D.h * v.s);
 
       const near = this.hotspotNear();
-      for (const h of D.hotspots) {
+      for (const h of this.allHotspots()) {
         const sy = v.oy + h.y * v.s;
         if (sy < -40 || sy > G.H + 40) continue;
         if (h !== near) drawMarker(ctx, v.ox + h.x * v.s, sy, this.t + h.x);

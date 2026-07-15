@@ -109,9 +109,9 @@ window.G = window.G || {};
       trigger: 'the old sofa',
       pages: [
         'The sofa smells faintly of chamomile and machine oil — like Grandmother Brida\'s lap.',
-        'Mother and Father served at Harrowgate House, so it was Brida who raised me, in the little room behind the laundry. Every night, when the silver was polished and the lamps went out, she would light one stub of candle.',
+        'Four of us shared two rooms in Cinder Row. When Mother worked late, Brida would light one stub of candle and turn the kitchen table into a sewing room.',
         '"Watch the needle, Mari, not your fingers," she\'d whisper. "A straight seam is a small honest thing. Enough small honest things make a life."',
-        'She taught me to cut, to mend, to listen to cloth. The gentry upstairs never knew that the finest tailor in the county was ironing their bedsheets.',
+        'She could make one good shirt from two worn ones. She called it thrift. I know now it was a kind of courage.',
       ],
       reward: 5,
     },
@@ -120,9 +120,9 @@ window.G = window.G || {};
       trigger: 'the firewood by the hearth',
       pages: [
         'The rough clay bricks by the fire still make my palms ache, just to look at them.',
-        'Six years at the Ashford brickworks. Carrying, stacking, counting. Ten hours a day, and every seventh coin into the tea tin under my cot.',
+        'Six years at the Ashford brickworks with Mother and Tomas. Carrying, stacking, counting. Ten hours a day, and every seventh coin into the tea tin under my cot.',
         'The other girls thought I was saving for a dowry. I was saving for a shop sign. On the worst days I would sketch dresses in the brick dust with a stick, and the foreman would shout, and I would smile and wipe them away.',
-        'I already had every one of them by heart.',
+        'I already had every one of them by heart. Tomas used to keep watch for the foreman. I still write to him now; recovery asks for honest work of its own.',
       ],
       reward: 5,
     },
@@ -131,8 +131,8 @@ window.G = window.G || {};
       trigger: 'the framed picture',
       pages: [
         'A little framed print of a grand house. It could almost be Harrowgate.',
-        'I remember watching the Duchess\'s gowns go by from the servants\' stair — silk like poured cream, and my mother\'s red hands that had scrubbed the steps they swept over.',
-        '"One day," I told her, "I\'ll make dresses like that, and YOU will wear one."',
+        'I remember delivery carts from Larkspur Boulevard rolling past the brickworks — silk like poured cream, and my mother\'s red hands lifting another load.',
+        '"One day," I told her, "I\'ll make dresses like that, and YOU will wear one in our own warm home."',
         'Mother laughed. But last spring, on her birthday, she stood in this very shop in cream linen and lavender cotton, and she cried, and so did I.',
       ],
       reward: 5,
@@ -141,10 +141,10 @@ window.G = window.G || {};
 
   G.INTRO_PAGES = [
     'Auberlin, 1972.',
-    'Mari Thimm — daughter of servants, granddaughter of a secret seamstress, six long years a brick-carrier at the Ashford works —',
+    'Mari Thimm — Brida\'s granddaughter, Elise\'s daughter, six long years a brick-carrier at the Ashford works —',
     '— finally turns her own key, in her own door, under her own sign:',
-    'THE GILDED NEEDLE.\n\nThe paint is barely dry. The rent is due Friday. The bell above the door is waiting.',
-    'Help Mari serve her first customers, stitch her first orders, and stitch back together a few old memories along the way.',
+    'THE GILDED NEEDLE.\n\nEvery spare coin in the tea tin bought this key. The rent is due Friday. Mother is already making coffee.',
+    'Help Mari and Elise serve customers, keep the lights on, care for their home, and turn Brida\'s lessons into a future.',
   ];
 
   // ---------- EXTERIOR scene (exterior.png 1254x1254) ----------
@@ -167,7 +167,7 @@ window.G = window.G || {};
   };
 
   G.EXTERIOR_FLAVOR = {
-    chalkboard: ['"Custom Fit — Timeless Style." I chalked that at five this morning. My hands were shaking a little.'],
+    chalkboard: ['"Custom Fit — Timeless Style." Mother held the board while I chalked it. Both our hands were shaking a little.'],
     sign: ['My own sign. Six years of brick dust bought that little painted coat.', 'Grandmother Brida\'s thimble is buried in the mortar under it. For luck.'],
     window_left: ['The display suit took me three weeks. The Duke himself couldn\'t buy it — it\'s not for sale.'],
     window_right: ['Bolts of gingham and good wool plaid. Every one chosen at the Ribbon Row market at dawn.'],
@@ -224,7 +224,7 @@ window.G = window.G || {};
   };
 
   G.INTERIOR_FLAVOR = {
-    coffee: ['The espresso machine cost more than the sewing machines. Grandmother would call it "citified nonsense"... and then ask for two sugars.'],
+    coffee: ['Cheap coffee keeps waiting customers warm. Mother calls it good business. Grandmother would have asked for two sugars.'],
     hearth_after: ['The fire pops. The brick dust is behind me now — but I keep a few rough bricks by the hearth, so I never forget the weight of them.'],
     sofa_after: ['I could almost hear her: "Watch the needle, Mari, not your fingers."'],
     painting_after: ['Mother in cream linen. The best seam I ever closed.'],

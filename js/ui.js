@@ -30,8 +30,10 @@ window.G = window.G || {};
       ui.innerHTML = `
         <div id="hud" style="display:none">
           <div class="chip" id="coins-chip">🪙 <b>0</b></div>
+          <div class="chip" id="day-chip">Day <b>1</b> · 8:00</div>
           <div class="chip btn" id="btn-orders">📜 Orders <b id="order-count">0</b></div>
           <div class="chip btn" id="btn-fabrics">🧵 Fabrics</div>
+          <div class="chip btn" id="btn-condition">🧹 <b>82</b>% · 💭 <span>18</span>%</div>
         </div>
         <div id="toasts"></div>
         <div id="dialogue">
@@ -43,6 +45,7 @@ window.G = window.G || {};
 
       $('#btn-orders').addEventListener('click', () => this.openOrdersPanel());
       $('#btn-fabrics').addEventListener('click', () => this.openFabricsPanel());
+      $('#btn-condition').addEventListener('click', () => this.openLedgerPanel());
       dlg.addEventListener('click', () => this.advance());
       window.addEventListener('keydown', (e) => {
         if ((e.code === 'Space' || e.code === 'KeyE' || e.code === 'Enter') && this._dlgActive) {
@@ -59,6 +62,14 @@ window.G = window.G || {};
       if (!hud) return;
       $('#coins-chip b').textContent = G.S.coins;
       $('#order-count').textContent = G.Orders.list.length;
+      if (G.Management) {
+        const m = G.Management.ensure();
+        $('#day-chip b').textContent = m.day;
+        $('#day-chip').lastChild.textContent = ' · ' + G.Management.clock();
+        $('#btn-condition b').textContent = Math.round(m.cleanliness);
+        $('#btn-condition span').textContent = Math.round(m.stress);
+        $('#btn-condition').classList.toggle('warning', m.cleanliness < 45 || m.stress > 75);
+      }
     },
 
     toast(msg) {
@@ -155,7 +166,7 @@ window.G = window.G || {};
           : `Pick a top: <b>${o.wantText}</b>`;
         const whereNote = o.kind === 'sew' ? 'use a sewing machine' : 'use a mannequin or the wardrobe';
         rows += `<div class="row ${o.status === 'sewn' ? 'done' : ''}">
-          <div class="grow">${what}<div class="meta">for ${o.name} — pays ~🪙${o.pay} — ${whereNote}</div></div>
+          <div class="grow">${what}<div class="meta">for ${o.name} — quote 🪙${o.pay}, deposit 🪙${o.deposit || 0} — due day ${o.dueDay || '?'} — ${whereNote}</div></div>
         </div>`;
       });
       this._openPanel(`<h2>📜 Order Book</h2><div class="sub">Orders completed so far: ${G.S.ordersDone}</div>${rows}`);
@@ -176,6 +187,32 @@ window.G = window.G || {};
     },
 
     openLedgerPanel() {
+      const m = G.Management.ensure();
+      const billRow = (id, label) => {
+        const b = m.bills[id];
+        const state = b.paid ? '✓ set aside' : `🪙 ${b.amount}`;
+        return `<div class="row ${b.paid ? 'done' : ''}">
+          <div class="grow">${label}<div class="meta">due day ${b.dueDay}</div></div>
+          <button data-mgmt="pay-${id}" ${b.paid || G.S.coins < b.amount ? 'disabled' : ''}>${state}</button>
+        </div>`;
+      };
+      const condition = `
+        <div class="status-grid">
+          <div><span>Cleanliness</span><b>${Math.round(m.cleanliness)}%</b><i><em style="width:${m.cleanliness}%"></em></i></div>
+          <div><span>Stress</span><b>${Math.round(m.stress)}%</b><i class="stress"><em style="width:${m.stress}%"></em></i></div>
+          <div><span>Coffee</span><b>${m.coffeeStock} cups</b></div>
+          <div><span>Home comfort</span><b>${m.homeComfort}</b></div>
+          <div><span>Mother</span><b>${G.Management.motherLabel()}</b></div>
+          <div><span>Today</span><b>+${m.daily.income} / -${m.daily.expenses}</b></div>
+        </div>`;
+      const homeRows = Object.keys(G.Management.homeItems).map(id => {
+        const item = G.Management.homeItems[id];
+        const owned = !!m.home[id];
+        return `<div class="row ${owned ? 'done' : ''}">
+          <div class="grow">${item.name}<div class="meta">${item.desc} Comfort +${item.comfort}</div></div>
+          ${owned ? '<b>✓ home</b>' : `<button data-mgmt="home-${id}" ${G.S.coins < item.price ? 'disabled' : ''}>🪙 ${item.price}</button>`}
+        </div>`;
+      }).join('');
       const fabricRows = Object.keys(G.FABRICS).map(k => {
         const f = G.FABRICS[k];
         const afford = G.S.coins >= f.price;
@@ -194,9 +231,44 @@ window.G = window.G || {};
         </div>`;
       }).join('');
       const el = this._openPanel(
-        `<h2>📒 Shop Ledger</h2><div class="sub">Coins: 🪙 ${G.S.coins} — orders completed: ${G.S.ordersDone}</div>
+        `<h2>📒 Shop Ledger · Day ${m.day}</h2><div class="sub">Necessities before wants. Coins: 🪙 ${G.S.coins} — orders completed: ${G.S.ordersDone}</div>
+         ${condition}
+         <h2 class="section-title">Today & essentials</h2>
+         <div class="row"><div class="grow">Deep-clean shop<div class="meta">Clear all cups, scraps, and dust. Stress +3.</div></div><button data-mgmt="clean">🧹 Clean</button></div>
+         <div class="row"><div class="grow">Coffee supplies<div class="meta">8 cups; each sale earns 🪙2 and buys patience.</div></div><button data-mgmt="coffee" ${G.S.coins < 6 ? 'disabled' : ''}>🪙 6</button></div>
+         ${billRow('rent', 'Shop rent')}${billRow('electricity', 'Electricity')}
+         <div class="row"><div class="grow">Close for the day<div class="meta">Food costs 🪙5; helper wage costs 🪙6. Rest restores stress.</div></div><button data-mgmt="close-day">🌙 Close</button></div>
+         <h2 class="section-title">Home stability</h2>${homeRows}
+         <h2 class="section-title">Help</h2>
+         <div class="row ${m.staff.helper ? 'done' : ''}"><div class="grow">Lina · cleaner & coffee helper<div class="meta">Unlock after 4 orders. First wages 🪙30, then 🪙6/day.</div></div>${m.staff.helper ? '<b>✓ hired</b>' : `<button data-mgmt="hire" ${G.S.ordersDone < 4 || G.S.coins < 30 ? 'disabled' : ''}>Hire</button>`}</div>
          <h2 style="font-size:17px;border:none;margin-top:8px">Buy fabric</h2>${fabricRows}
          <h2 style="font-size:17px;border:none;margin-top:10px">Improvements</h2>${upgRows}`);
+      el.querySelectorAll('[data-mgmt]').forEach(b => b.addEventListener('click', () => {
+        const action = b.dataset.mgmt;
+        let result;
+        if (action === 'clean') result = G.Management.deepClean();
+        else if (action === 'coffee') result = G.Management.restockCoffee();
+        else if (action === 'pay-rent') result = G.Management.payBill('rent');
+        else if (action === 'pay-electricity') result = G.Management.payBill('electricity');
+        else if (action.indexOf('home-') === 0) result = G.Management.buyHome(action.slice(5));
+        else if (action === 'hire') result = G.Management.hireHelper();
+        else if (action === 'close-day') {
+          const report = G.Management.closeDay();
+          this.closePanel();
+          if (G.modes.interior) {
+            G.modes.interior.customer = null;
+            G.modes.interior.nextCustomerIn = 7;
+          }
+          G.transition(() => G.setMode('exterior', { fromDoor: true }));
+          this.toast(`🌙 Day closed · income ${report.income} · expenses ${report.expenses}`);
+          this.updateHUD();
+          return;
+        }
+        G.Audio.play(result.ok ? 'success' : 'error');
+        this.toast(result.message);
+        this.updateHUD();
+        this.openLedgerPanel();
+      }));
       el.querySelectorAll('[data-buy-fabric]').forEach(b => b.addEventListener('click', () => {
         const k = b.dataset.buyFabric, f = G.FABRICS[k];
         if (G.S.coins < f.price) return;

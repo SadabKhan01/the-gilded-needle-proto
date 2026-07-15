@@ -127,6 +127,24 @@ window.G = window.G || {};
     ordersDone: 0,
     memoriesSeen: {},
     introSeen: false,
+    management: {
+      day: 1,
+      minute: 480,
+      cleanliness: 82,
+      stress: 18,
+      coffeeStock: 6,
+      homeComfort: 5,
+      trash: [],
+      home: {},
+      staff: {},
+      mother: { health: 82, status: 'working', illDays: 0 },
+      bills: {
+        rent: { amount: 35, dueDay: 7, period: 7, paid: false },
+        electricity: { amount: 16, dueDay: 5, period: 5, paid: false },
+      },
+      daily: { income: 0, expenses: 0, coffeeIncome: 0, customers: 0 },
+      lateBills: 0,
+    },
   });
   G.S = DEFAULT_STATE();
   G.save = function () {
@@ -136,6 +154,7 @@ window.G = window.G || {};
     try {
       const raw = localStorage.getItem(SAVE_KEY);
       if (raw) G.S = Object.assign(DEFAULT_STATE(), JSON.parse(raw));
+      if (G.Management) G.Management.ensure();
     } catch (e) { G.S = DEFAULT_STATE(); }
   };
   G.resetSave = function () { G.S = DEFAULT_STATE(); G.save(); };

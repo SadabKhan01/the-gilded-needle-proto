@@ -42,6 +42,7 @@ html, body {
 }
 #hud .chip.btn { cursor: pointer; transition: transform .08s ease, background .12s; }
 #hud .chip.btn:hover { background: rgba(74, 50, 28, 0.94); transform: translateY(-1px); }
+#hud .chip.warning { border-color: #d86b58; background: rgba(92, 42, 31, 0.94); }
 #coins-chip b { color: #f2c14e; font-size: 17px; }
 
 /* ---------- toasts ---------- */
@@ -109,6 +110,18 @@ html, body {
   border-bottom: 2px dashed #c9a266; padding-bottom: 6px;
 }
 .panel .sub { font-size: 13px; font-style: italic; color: #8a6a3a; margin-bottom: 10px; }
+.panel .section-title { font-size: 17px; border: none; margin-top: 12px; }
+.status-grid {
+  display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px 12px;
+  padding: 9px 10px; margin: 8px 0 10px; border: 1.5px dashed #c9a266;
+  border-radius: 10px; background: rgba(255,255,255,.28);
+}
+.status-grid > div { display: grid; grid-template-columns: 1fr auto; gap: 4px 8px; font-size: 12px; }
+.status-grid span { color: #8a6a3a; }
+.status-grid b { font-size: 12px; }
+.status-grid i { grid-column: 1 / -1; height: 5px; overflow: hidden; border-radius: 4px; background: #d5c39e; }
+.status-grid i em { display: block; height: 100%; background: #6f8b55; }
+.status-grid i.stress em { background: #b96458; }
 .panel .close {
   position: absolute; top: 10px; right: 12px;
   width: 30px; height: 30px; border-radius: 50%;
@@ -144,3 +157,10 @@ html, body {
 /* scrollbars */
 .panel::-webkit-scrollbar { width: 10px; }
 .panel::-webkit-scrollbar-thumb { background: #c9a266; border-radius: 6px; }
+
+@media (max-width: 720px) {
+  #hud { top: 8px; left: 8px; right: 8px; gap: 5px; flex-wrap: wrap; }
+  #hud .chip { padding: 5px 9px; font-size: 12px; }
+  #btn-fabrics { display: none; }
+  .status-grid { grid-template-columns: 1fr; }
+}

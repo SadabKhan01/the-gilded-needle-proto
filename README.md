@@ -4,9 +4,10 @@ A cozy 2D tailor-shop RPG prototype. The three painted scenes (`assets/`) are us
 full-screen backgrounds; the playable character, hotspots, customers, mini-games and UI
 are layered on top — no tile engine.
 
-**Story:** Auberlin, 1972. Mari Thimm — daughter of servants at Harrowgate House,
-secretly taught to sew by her grandmother Brida, six years a carrier at the Ashford
-brickworks — finally opens her own shop.
+**Story:** Auberlin, 1972. Mari Thimm grew up in Cinder Row and spent six years carrying
+bricks beside her mother Elise and brother Tomas. Taught to sew by her late grandmother
+Brida, she finally spends the tea-tin savings on a shop of her own. The work now has to
+support the family without swallowing the life they are trying to build.
 
 ## Run
 
@@ -35,6 +36,8 @@ then open http://localhost:8642. No build step, no dependencies.
 | Sewing mini-game | cut the pins in order, then time the stitches — quality affects pay |
 | Wardrobe mini-game | dress-up screen over the wardrobe painting; find the requested top |
 | Shop management | coins, fabric bolts, order book, ledger with fabric purchases + 3 upgrades |
+| Daily pressure | cleanliness, coffee stock, stress, rent, electricity, food, fair wages |
+| Family stability | mother health, home comfort purchases, end-of-day recovery |
 | Memories | 3 story flashbacks: Grandmother Brida, the brickworks, the servants' stair |
 
 ## Files
@@ -48,4 +51,4 @@ then open http://localhost:8642. No build step, no dependencies.
 
 ## Next locations (planned)
 
-Brick factory, Harrowgate House, fabric market, Grandmother's cottage, town streets.
+Brick factory, current family home, sheep farm, fabric market, charity shop, docks, town streets.
