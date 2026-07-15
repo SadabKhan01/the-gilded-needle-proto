@@ -52,11 +52,30 @@ window.G = window.G || {};
     sg.drawImage(img, crop.x, crop.y, crop.w, crop.h, 0, 0, crop.w, crop.h);
     clearConnectedBackdrop(sg, crop.w, crop.h);
 
+    // Fit the painted figure rather than the surrounding source-cell padding.
+    // This gives Mari, Elise, customers and roaming townspeople one consistent
+    // apparent height even though their source sheets have different margins.
+    const pixels = sg.getImageData(0, 0, crop.w, crop.h).data;
+    let minX = crop.w, minY = crop.h, maxX = -1, maxY = -1;
+    for (let y = 0; y < crop.h; y++) {
+      for (let x = 0; x < crop.w; x++) {
+        if (pixels[(y * crop.w + x) * 4 + 3] > 24) {
+          minX = Math.min(minX, x); minY = Math.min(minY, y);
+          maxX = Math.max(maxX, x); maxY = Math.max(maxY, y);
+        }
+      }
+    }
+    if (maxX < minX) { minX = 0; minY = 0; maxX = crop.w - 1; maxY = crop.h - 1; }
+    const pad = 5;
+    minX = Math.max(0, minX - pad); minY = Math.max(0, minY - pad);
+    maxX = Math.min(crop.w - 1, maxX + pad); maxY = Math.min(crop.h - 1, maxY + pad);
+    const fitW = maxX - minX + 1, fitH = maxY - minY + 1;
+
     const c = makeCanvas();
     const g = c.getContext('2d');
-    const scale = Math.min((BW - 5) / crop.w, (BH - 3) / crop.h);
-    const w = crop.w * scale, h = crop.h * scale;
-    g.drawImage(source, (BW - w) / 2, BH - h, w, h);
+    const scale = Math.min((BW - 6) / fitW, (BH - 2) / fitH);
+    const w = fitW * scale, h = fitH * scale;
+    g.drawImage(source, minX, minY, fitW, fitH, (BW - w) / 2, BH - h, w, h);
     return c;
   }
 
@@ -187,8 +206,14 @@ window.G = window.G || {};
       // runtime sprite without altering the reference source file.
       this.mari = G.makeReferenceSprite(G.images.marielle_sheet, { x: 555, y: 105, w: 300, h: 465 });
       this.elise = G.makeReferenceSprite(G.images.elise_sheet, { x: 565, y: 0, w: 280, h: 485 });
-      this.customers = G.CUSTOMER_LOOKS.map(l =>
-        G.makeSprite({ hair: l.hair, dress: l.dress, skin: l.skin, accent: '#8a6a3a' }));
+      this.customers = [];
+      for (let row = 0; row < 2; row++) {
+        for (let col = 0; col < 3; col++) {
+          this.customers.push(G.makeReferenceSprite(G.images.npc_sheet, {
+            x: col * 512, y: row * 512, w: 512, h: 512
+          }));
+        }
+      }
     },
   };
 
@@ -200,18 +225,27 @@ window.G = window.G || {};
     let idx = 0;
     if (opts.walking) idx = (Math.floor(opts.time * 7) % 2) + 1;
     const img = frames[idx];
-    const scale = h / 150;                 // chibi body occupies ~150px of the 160 canvas
+    const scale = h / BH;
     const w = set.w * scale, hh = set.h * scale;
-    const bob = opts.walking ? Math.sin(opts.time * 14) * h * 0.012 : Math.sin((opts.time || 0) * 2.2) * h * 0.006;
+    const phase = Math.sin((opts.time || 0) * 11);
+    const stride = opts.walking ? phase : 0;
     ctx.save();
-    // soft shadow
+    // The shadow and the bottom of the image share feetY: movement sways and
+    // leans around that contact point, never lifting the whole character.
     ctx.fillStyle = 'rgba(40,25,10,0.28)';
     ctx.beginPath();
-    ctx.ellipse(feetX, feetY, w * 0.26, h * 0.055, 0, 0, Math.PI * 2);
+    ctx.ellipse(feetX, feetY + 1, w * (opts.walking ? 0.3 : 0.26), h * 0.045, 0, 0, Math.PI * 2);
     ctx.fill();
-    ctx.translate(feetX, feetY - hh * 0.955 + bob);
+    if (opts.walking) {
+      ctx.fillStyle = 'rgba(226,199,145,0.34)';
+      ctx.beginPath();
+      ctx.ellipse(feetX - Math.sign(stride || 1) * w * 0.14, feetY, w * 0.08, h * 0.018, 0, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.translate(feetX + stride * w * 0.018, feetY);
+    if (opts.walking) ctx.rotate(stride * 0.018);
     if (opts.flip) { ctx.scale(-1, 1); }
-    ctx.drawImage(img, -w / 2, 0, w, hh);
+    ctx.drawImage(img, -w / 2, -hh, w, hh);
     ctx.restore();
   };
 

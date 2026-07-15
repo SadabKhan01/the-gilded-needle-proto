@@ -1,6 +1,6 @@
 # Art Asset Manifest and Curation Plan
 
-The playable build remains procedural pixel art at 480x270. Supplied high-resolution images are source references and may also support menus/cinematics after optimization. They are not silently mixed into the pixel world.
+The playable build uses painterly illustrated backgrounds with transparent full-body character cutouts and code-native SVG crests. Supplied high-resolution images remain the visual canon and are only used at runtime where explicitly listed below.
 
 ## Supplied and curated
 
@@ -25,6 +25,10 @@ The PDF's third page is blank and is intentionally not retained. The PDF had no 
 
 ## P0 generated/created assets
 
+0. Open-world Auberlin background: label-free, road-connected town painting derived from the supplied map and curated as `assets/auberlin-open-world.png`.
+0. Victorian townspeople sheet: six equal-height full-body residents on transparency, curated as `assets/auberlin-npcs.png`.
+0. Location crest family: eight original code-native SVG emblems in `assets/logos/` for the tailor, farm, muslin works, fabric shop, charity shop, brickworks, home, and quay.
+
 1. Marielle portrait sheet: neutral, smile, worried, focused, tired, relieved; cream apron and tape sash.
 2. Marielle pixel sheet: four directions, walk, sewing, cleaning, coffee, carrying materials.
 3. Elise portrait sheet: neutral, wry smile, tired, ill/resting, proud; grey strands and work apron.
@@ -36,6 +40,14 @@ The PDF's third page is blank and is intentionally not retained. The PDF had no 
 8. Management icon set: rent, electricity, food, medicine, coffee, clean, stress, health, comfort, wage.
 9. Order card garment silhouettes: blouse, peplum, gingham dress, repair, custom dress, bulk box.
 10. Manufacturing Complete card: stitched seal, quality stars, wrapped parcel.
+
+### Open-world Auberlin
+
+Use case: stylized-concept/edit. Asset: 16:9 isometric town exploration background. Primary request: remove every title, banner, label, and UI element from the supplied Auberlin map while preserving its recognizable geography; widen and connect the cobbled roads between sheep farm, muslin works, both brickworks, eastern working districts, estates, central shops, residences, and southeast ship deck. Rich hand-painted Victorian/Belle Époque atmosphere, autumn greenery, readable roads, no people, no text, no watermark. Generated with the built-in ChatGPT image-generation tool and curated into `assets/auberlin-open-world.png`.
+
+### Auberlin townspeople
+
+Use case: character-sheet. Asset: transparent 3x2 full-body NPC sheet. Primary request: six distinct Victorian residents — Black middle-aged seamstress, older sheep farmer, brown-skinned muslin clerk, charity-shop matron, East Asian dock merchant, and young aristocratic customer — in the same warm illustrated chibi language and apparent height. Strong silhouettes, detailed period workwear, no text or props crossing cells. Generated against a flat chroma background, background-removed with the bundled image tool, and curated into `assets/auberlin-npcs.png`.
 
 ## P1 assets
 

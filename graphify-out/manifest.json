@@ -1,8 +1,8 @@
 {
   "js/data.js": {
-    "mtime": 1784089398.5326579,
-    "ast_hash": "a68541ab0376a725da865660b2fcbaf9",
-    "semantic_hash": "a68541ab0376a725da865660b2fcbaf9"
+    "mtime": 1784093786.3958488,
+    "ast_hash": "554e5003c23917c8ba1284eab7518739",
+    "semantic_hash": ""
   },
   "js/engine.js": {
     "mtime": 1784086611.4886055,
@@ -10,9 +10,9 @@
     "semantic_hash": "e082d4cc23cdacb261ddafb2853fe22c"
   },
   "js/main.js": {
-    "mtime": 1784090096.2542052,
-    "ast_hash": "2b53374abf6ed8e815c244a7e5ff12e5",
-    "semantic_hash": "2b53374abf6ed8e815c244a7e5ff12e5"
+    "mtime": 1784093211.9329345,
+    "ast_hash": "7452fa96a8cb1351b852f90d34ad1077",
+    "semantic_hash": ""
   },
   "js/management.js": {
     "mtime": 1784089398.5332553,
@@ -25,29 +25,29 @@
     "semantic_hash": "76dc6ccff84bfbcbcffae6e6e58a1836"
   },
   "js/scenes.js": {
-    "mtime": 1784090000.8558414,
-    "ast_hash": "bd76e09e8af16efb87110b37c509d62f",
-    "semantic_hash": "bd76e09e8af16efb87110b37c509d62f"
+    "mtime": 1784093844.4901724,
+    "ast_hash": "e85d9f8f2a6e64ed25fd42f8a1bcfcad",
+    "semantic_hash": ""
   },
   "js/sprites.js": {
-    "mtime": 1784086737.4631205,
-    "ast_hash": "fdfeceb65d4f1c5872ed06b88e09306b",
-    "semantic_hash": "fdfeceb65d4f1c5872ed06b88e09306b"
+    "mtime": 1784093247.5817342,
+    "ast_hash": "a854239170b862c26e8f39843fa56d30",
+    "semantic_hash": ""
   },
   "js/ui.js": {
-    "mtime": 1784089434.155834,
-    "ast_hash": "9ee14643e4587bf6437cbc22195737b0",
-    "semantic_hash": "9ee14643e4587bf6437cbc22195737b0"
+    "mtime": 1784093374.4962308,
+    "ast_hash": "696fe91d0097052e0b7aa2779d69451c",
+    "semantic_hash": ""
   },
   "tests/management-smoke.js": {
-    "mtime": 1784089537.767808,
-    "ast_hash": "7f7bd4d5a971389b3d1c1014a4eb09fe",
-    "semantic_hash": "7f7bd4d5a971389b3d1c1014a4eb09fe"
+    "mtime": 1784093903.6071167,
+    "ast_hash": "49a3f578cd323f0ece82f05b16a6c140",
+    "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1784089537.7672248,
-    "ast_hash": "dc151035bd2a2156982403ff868b1e34",
-    "semantic_hash": "dc151035bd2a2156982403ff868b1e34"
+    "mtime": 1784094231.9510589,
+    "ast_hash": "4cd36f948ac46a91a1ed97286ad47e97",
+    "semantic_hash": ""
   },
   "assets/reference/README.md": {
     "mtime": 1784083195.400067,
@@ -55,14 +55,14 @@
     "semantic_hash": "114621f628033826f11993456b608d95"
   },
   "design/ASSET_MANIFEST.md": {
-    "mtime": 1784090000.856092,
-    "ast_hash": "aee706b832a2813ee1e35f540525fd6c",
-    "semantic_hash": "aee706b832a2813ee1e35f540525fd6c"
+    "mtime": 1784094231.9513793,
+    "ast_hash": "9272b0a93d4d2144eaa9d1a38c42304e",
+    "semantic_hash": ""
   },
   "design/ISSUES.md": {
-    "mtime": 1784089537.7674017,
-    "ast_hash": "39116c8d1a3e6089c81f807c103b40b7",
-    "semantic_hash": "39116c8d1a3e6089c81f807c103b40b7"
+    "mtime": 1784094231.9516597,
+    "ast_hash": "839a478b14c4e6275fde73e4d9c5619a",
+    "semantic_hash": ""
   },
   "design/PRODUCT_PLAN.md": {
     "mtime": 1784083195.4366856,
@@ -123,5 +123,55 @@
     "mtime": 1784089864.4089537,
     "ast_hash": "6eed8aff35ab7051af2d13dea4c80903",
     "semantic_hash": "6eed8aff35ab7051af2d13dea4c80903"
+  },
+  "assets/auberlin-npcs.png": {
+    "mtime": 1784092891.5194793,
+    "ast_hash": "3769b4e51d95cb58848952fc9297cabe",
+    "semantic_hash": ""
+  },
+  "assets/auberlin-open-world.png": {
+    "mtime": 1784092755.163492,
+    "ast_hash": "fc39fab3b328ca0e5a6fa5f2ffc77618",
+    "semantic_hash": ""
+  },
+  "assets/logos/brickworks.svg": {
+    "mtime": 1784092998.548105,
+    "ast_hash": "5962799aad1862844a2b95e5ba53c057",
+    "semantic_hash": ""
+  },
+  "assets/logos/charity-store.svg": {
+    "mtime": 1784092998.547956,
+    "ast_hash": "53fd7c33800fc8e844752822640cdb42",
+    "semantic_hash": ""
+  },
+  "assets/logos/fabric-store.svg": {
+    "mtime": 1784092998.5478034,
+    "ast_hash": "3b3e98413854efc307a5bfd54f7f8d4b",
+    "semantic_hash": ""
+  },
+  "assets/logos/home.svg": {
+    "mtime": 1784092998.548231,
+    "ast_hash": "a90964a1d55b7ced011a4f09bc41855f",
+    "semantic_hash": ""
+  },
+  "assets/logos/muslin-factory.svg": {
+    "mtime": 1784092998.5476503,
+    "ast_hash": "e6a7fef1f8eb923b8acb3bfb39cf2f05",
+    "semantic_hash": ""
+  },
+  "assets/logos/sheep-farm.svg": {
+    "mtime": 1784092998.5474792,
+    "ast_hash": "09460572d18b676544a42280c89d491e",
+    "semantic_hash": ""
+  },
+  "assets/logos/ship-deck.svg": {
+    "mtime": 1784092998.5483522,
+    "ast_hash": "8abc2dceafa3e19fbc82b3179a9f06ba",
+    "semantic_hash": ""
+  },
+  "assets/logos/tailor.svg": {
+    "mtime": 1784092998.5472486,
+    "ast_hash": "f596cac4b2e03cb8c6a9003514587a89",
+    "semantic_hash": ""
   }
 }

@@ -50,7 +50,7 @@ window.G = window.G || {};
       ui = $('#ui');
       ui.innerHTML = `
         <div id="hud" style="display:none">
-          <div class="chip btn map-chip" id="btn-map">🗺 <b>Map</b></div>
+          <div class="chip btn map-chip" id="btn-map"><img src="assets/logos/tailor.svg" alt=""><b>Explore Auberlin</b></div>
           <div class="chip" id="coins-chip">🪙 <b>0</b></div>
           <div class="chip" id="day-chip">Day <b>1</b> · 8:00</div>
           <div class="chip btn" id="btn-orders">📜 Orders <b id="order-count">0</b></div>
@@ -65,7 +65,13 @@ window.G = window.G || {};
         </div>`;
       hud = $('#hud'); dlg = $('#dialogue'); toasts = $('#toasts');
 
-      $('#btn-map').addEventListener('click', () => this.openMapPanel());
+      $('#btn-map').addEventListener('click', () => {
+        if (G.modeName === 'world') this.openMapPanel();
+        else {
+          this.closePanel();
+          G.transition(() => G.setMode('world', { location: G.S.currentLocation || 'tailor' }));
+        }
+      });
       $('#btn-orders').addEventListener('click', () => this.openOrdersPanel());
       $('#btn-fabrics').addEventListener('click', () => this.openFabricsPanel());
       $('#btn-condition').addEventListener('click', () => this.openLedgerPanel());
@@ -218,9 +224,9 @@ window.G = window.G || {};
 
     openMapPanel() {
       const pins = G.MAP_LOCATIONS.map(loc =>
-        `<button class="map-pin ${G.S.currentLocation === loc.id ? 'current' : ''}" data-map-location="${loc.id}" style="left:${loc.x}%;top:${loc.y}%" title="${loc.note}"><span>${loc.icon}</span><b>${loc.title}</b></button>`).join('');
+        `<button class="map-pin ${G.S.currentLocation === loc.id ? 'current' : ''}" data-map-location="${loc.id}" style="left:${loc.x}%;top:${loc.y}%" title="${loc.note}"><img src="${loc.logo}" alt=""><b>${loc.title}</b></button>`).join('');
       const el = this._openPanel(
-        `<h2>🗺 Auberlin Town Map</h2><div class="sub">Choose a destination. Suppliers sell the cloth and notions required by made-from-scratch orders.</div>
+        `<h2 class="crest-heading"><img src="assets/logos/tailor.svg" alt="">Auberlin Town Map</h2><div class="sub">Choose where to begin exploring, then walk the connected roads. Crested suppliers sell the cloth and notions required by made-from-scratch orders.</div>
          <div class="town-map"><img src="assets/reference/auberlin-town-map.png" alt="Illustrated Auberlin town map">${pins}</div>`);
       el.classList.add('map-panel');
       el.querySelectorAll('[data-map-location]').forEach(pin => pin.addEventListener('click', () => this.openMapLocation(pin.dataset.mapLocation)));
@@ -231,15 +237,8 @@ window.G = window.G || {};
       if (!location) return;
       G.S.currentLocation = id;
       G.save();
-      if (location.action === 'tailor') {
-        this.closePanel();
-        G.transition(() => G.setMode('exterior', { fromDoor: true }));
-      } else if (location.action === 'home') {
-        this.closePanel();
-        G.transition(() => G.setMode('home', { fromMap: true }));
-      }
-      else if (location.action === 'brickworks') this.openBrickworksPanel();
-      else if (location.supplier) this.openSupplierPanel(location.supplier);
+      this.closePanel();
+      G.transition(() => G.setMode('world', { location: location.id, fromMap: true }));
     },
 
     openSupplierPanel(supplierId) {
@@ -254,7 +253,7 @@ window.G = window.G || {};
       const fabrics = supplier.fabrics.map(id => itemRow('fabric', id)).join('');
       const materials = supplier.materials.map(id => itemRow('material', id)).join('');
       const el = this._openPanel(
-        `<button class="panel-back" data-back-map>← Map</button><h2>${supplier.portrait} ${supplier.title}</h2><div class="sub">${supplier.desc}</div>
+        `<button class="panel-back" data-back-map>← Map</button><h2 class="crest-heading"><img src="${supplier.logo}" alt="">${supplier.title}</h2><div class="sub">${supplier.desc}</div>
          <h2 class="section-title">Cloth</h2>${fabrics}<h2 class="section-title">Notions</h2>${materials}`);
       el.querySelector('[data-back-map]').addEventListener('click', () => this.openMapPanel());
       el.querySelectorAll('[data-buy-supply]').forEach(button => button.addEventListener('click', () => {
@@ -278,7 +277,7 @@ window.G = window.G || {};
       }).join('');
       const fromHome = G.modeName === 'home';
       const el = this._openPanel(
-        `<button class="panel-back" data-home-back>← ${fromHome ? 'Room' : 'Map'}</button><h2>🏠 Home Essentials</h2><div class="sub">The bed and oil light are all they begin with. Kitchen appliances and comforts must be bought from shop earnings.</div>
+        `<button class="panel-back" data-home-back>← ${fromHome ? 'Room' : 'Map'}</button><h2 class="crest-heading"><img src="assets/logos/home.svg" alt="">Home Essentials</h2><div class="sub">The bed and oil light are all they begin with. Kitchen appliances and comforts must be bought from shop earnings.</div>
          <div class="family-card"><div class="elise-portrait"></div><div><b>Elise Thimm · Mother</b><p>${G.Management.motherLabel()} · health ${Math.round(m.mother.health)}%</p><p>Home comfort ${m.homeComfort}. ${owned.length ? 'At home: ' + owned.join(', ') + '.' : 'The kitchen is bare and the room has almost nothing.'}</p></div></div>
          <h2 class="section-title">Things the home still needs</h2>${itemRows}`);
       el.querySelector('[data-home-back]').addEventListener('click', () => fromHome ? this.closePanel() : this.openMapPanel());
@@ -293,7 +292,7 @@ window.G = window.G || {};
 
     openBrickworksPanel() {
       const el = this._openPanel(
-        `<button class="panel-back" data-back-map>← Map</button><h2>🧱 Ashford Brickworks</h2><div class="sub">The chimneys are still visible from every road into Auberlin.</div>
+        `<button class="panel-back" data-back-map>← Map</button><h2 class="crest-heading"><img src="assets/logos/brickworks.svg" alt="">Ashford Brickworks</h2><div class="sub">The chimneys are still visible from every road into Auberlin.</div>
          <div class="story-card">Mari and Elise carried bricks here while the tea-tin savings slowly grew. The works now supplies sturdy customers who need aprons, waistcoats, and repairable clothes—not a punishment loop, but part of the family's history.</div>`);
       el.querySelector('[data-back-map]').addEventListener('click', () => this.openMapPanel());
     },

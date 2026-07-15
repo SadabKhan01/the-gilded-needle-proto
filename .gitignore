@@ -1,3 +1,5 @@
+# Graphify's local incremental extraction and dated safety backups are reproducible.
+graphify-out/cache/ast/
+graphify-out/20??-??-??/
 graphify-out/.graphify_python
 graphify-out/.graphify_root
-

@@ -121,6 +121,234 @@ window.G = window.G || {};
     return G.Management ? G.Management.enrichOrder(order) : order;
   };
 
+  // ---------------- OPEN TOWN ----------------
+  const World = {
+    t: 0,
+    player: { x: 0, y: 0, flip: false, walking: false, dir: 'front' },
+    target: null,
+    people: [],
+
+    point(percent) {
+      return { x: percent[0] * G.WORLD.w / 100, y: percent[1] * G.WORLD.h / 100 };
+    },
+
+    location(id) { return G.MAP_LOCATIONS.find(loc => loc.id === id); },
+
+    locationPoint(loc, marker) {
+      const x = marker ? loc.x : (loc.walkX ?? loc.x);
+      const y = marker ? loc.y : (loc.walkY ?? loc.y);
+      return { x: x * G.WORLD.w / 100, y: y * G.WORLD.h / 100 };
+    },
+
+    enter(opts) {
+      this.t = 0;
+      const loc = this.location(opts.location || G.S.currentLocation) || G.MAP_LOCATIONS[0];
+      const p = this.locationPoint(loc);
+      this.player.x = p.x; this.player.y = p.y;
+      this.player.walking = false; this.target = null;
+      G.S.currentLocation = loc.id;
+      G.save();
+      G.UI.showHUD(true);
+      if (!this.people.length) this.seedPeople();
+      if (!this._welcomed) {
+        this._welcomed = true;
+        setTimeout(() => G.UI.say('Mari', [
+          'Auberlin is open to us now — every road from Briar Farm to Madder Quay.',
+          'Walk with the arrow keys or click a road. The crests mark shops, home, and places that supply our workroom.'
+        ]), 350);
+      }
+    },
+
+    seedPeople() {
+      const starts = [1, 3, 7, 10, 12, 16];
+      const names = ['Nell · seamstress', 'Mr. Briar · farmer', 'Amir · clerk', 'Mrs. Bell · matron', 'Ren · merchant', 'Lady Elowen'];
+      this.people = starts.map((node, i) => {
+        const p = this.point(G.WORLD.roadNodes[node]);
+        return { x: p.x, y: p.y, node, next: this.neighbor(node, -1), lookIdx: i, name: names[i], flip: false, dir: 'front', walking: true, speed: 72 + i * 7 };
+      });
+    },
+
+    neighbors(node) {
+      const list = [];
+      G.WORLD.roadEdges.forEach(edge => {
+        if (edge[0] === node) list.push(edge[1]);
+        else if (edge[1] === node) list.push(edge[0]);
+      });
+      return list;
+    },
+
+    neighbor(node, previous) {
+      const choices = this.neighbors(node).filter(n => n !== previous);
+      const pool = choices.length ? choices : this.neighbors(node);
+      return pool[Math.floor(Math.random() * pool.length)] ?? node;
+    },
+
+    view() {
+      const D = G.WORLD;
+      const s = Math.max(G.W / 1500, G.H / 900);
+      const visW = G.W / s, visH = G.H / s;
+      const camX = G.clamp(this.player.x - visW * 0.5, 0, Math.max(0, D.w - visW));
+      const camY = G.clamp(this.player.y - visH * 0.55, 0, Math.max(0, D.h - visH));
+      return { s, ox: -camX * s, oy: -camY * s };
+    },
+
+    segmentDistance(px, py, ax, ay, bx, by) {
+      const vx = bx - ax, vy = by - ay;
+      const len2 = vx * vx + vy * vy || 1;
+      const t = G.clamp(((px - ax) * vx + (py - ay) * vy) / len2, 0, 1);
+      return Math.hypot(px - (ax + vx * t), py - (ay + vy * t));
+    },
+
+    onRoad(x, y) {
+      const D = G.WORLD;
+      if (x < 35 || y < 30 || x > D.w - 35 || y > D.h - 35) return false;
+      for (const edge of D.roadEdges) {
+        const a = this.point(D.roadNodes[edge[0]]), b = this.point(D.roadNodes[edge[1]]);
+        if (this.segmentDistance(x, y, a.x, a.y, b.x, b.y) <= D.roadRadius) return true;
+      }
+      return G.MAP_LOCATIONS.some(loc => {
+        const p = this.locationPoint(loc);
+        return G.dist(x, y, p.x, p.y) < 92;
+      });
+    },
+
+    movePlayer(ax, ay, dt) {
+      const p = this.player;
+      const mag = Math.hypot(ax, ay) || 1;
+      const dx = ax / mag * 235 * dt, dy = ay / mag * 235 * dt;
+      let moved = false;
+      if (this.onRoad(p.x + dx, p.y)) { p.x += dx; moved = true; }
+      if (this.onRoad(p.x, p.y + dy)) { p.y += dy; moved = true; }
+      return moved;
+    },
+
+    updatePeople(dt) {
+      for (const person of this.people) {
+        const dest = this.point(G.WORLD.roadNodes[person.next]);
+        const dx = dest.x - person.x, dy = dest.y - person.y, d = Math.hypot(dx, dy);
+        if (d < 7) {
+          const old = person.node;
+          person.node = person.next;
+          person.next = this.neighbor(person.node, old);
+          continue;
+        }
+        person.x += dx / d * person.speed * dt;
+        person.y += dy / d * person.speed * dt;
+        person.flip = dx < 0;
+        person.dir = dy < -0.35 ? 'back' : 'front';
+      }
+    },
+
+    hotspotNear(range) {
+      let best = null, bd = Infinity;
+      for (const loc of G.MAP_LOCATIONS) {
+        const q = this.locationPoint(loc);
+        const d = G.dist(this.player.x, this.player.y, q.x, q.y);
+        if (d < (range || 115) && d < bd) { best = loc; bd = d; }
+      }
+      return best;
+    },
+
+    update(dt) {
+      this.t += dt;
+      G.updateFade(dt);
+      if (!G.UI.busy() && G.Fade.dir === 0) this.updatePeople(dt);
+      if (G.UI.busy() || G.Fade.dir !== 0) { this.player.walking = false; return; }
+      const p = this.player, v = this.view();
+      let ax = G.Input.axis().x, ay = G.Input.axis().y;
+
+      if (G.Input.mouse.clicked) {
+        const ix = (G.Input.mouse.x - v.ox) / v.s;
+        const iy = (G.Input.mouse.y - v.oy) / v.s;
+        if (this.onRoad(ix, iy)) this.target = { x: ix, y: iy };
+        else { this.target = null; G.UI.toast('Stay to Auberlin\'s roads and garden paths.'); }
+      }
+      if (ax || ay) this.target = null;
+      if (this.target) {
+        const dx = this.target.x - p.x, dy = this.target.y - p.y, d = Math.hypot(dx, dy);
+        if (d < 9) { this.target = null; ax = 0; ay = 0; }
+        else { ax = dx / d; ay = dy / d; }
+      }
+      p.walking = !!(ax || ay) && this.movePlayer(ax, ay, dt);
+      if (p.walking) {
+        if (ax) p.flip = ax < 0;
+        p.dir = ay < -0.3 ? 'back' : 'front';
+      } else if (this.target) this.target = null;
+
+      if (G.Input.pressed('KeyE') || G.Input.pressed('Space')) {
+        const loc = this.hotspotNear();
+        if (loc) this.interact(loc);
+      }
+    },
+
+    interact(loc) {
+      G.Audio.play('click');
+      G.S.currentLocation = loc.id;
+      G.save();
+      if (loc.action === 'tailor') G.transition(() => G.setMode('exterior', { fromTown: true }));
+      else if (loc.action === 'home') G.transition(() => G.setMode('home', { fromTown: true }));
+      else if (loc.action === 'brickworks') G.UI.openBrickworksPanel();
+      else if (loc.supplier) G.UI.openSupplierPanel(loc.supplier);
+    },
+
+    drawLocation(ctx, loc, v, near) {
+      const p = this.locationPoint(loc, true);
+      const sx = v.ox + p.x * v.s, sy = v.oy + p.y * v.s;
+      if (sx < -100 || sy < -100 || sx > G.W + 100 || sy > G.H + 100) return;
+      const size = (near ? 68 : 54) * v.s;
+      ctx.save();
+      ctx.shadowColor = near ? 'rgba(255,224,143,.95)' : 'rgba(42,24,9,.65)';
+      ctx.shadowBlur = near ? 20 : 8;
+      const logo = G.images['logo_' + loc.id];
+      if (logo) ctx.drawImage(logo, sx - size / 2, sy - size, size, size);
+      ctx.restore();
+      drawNamePill(ctx, sx, sy - size - 11, loc.title);
+      if (near && !G.UI.busy()) {
+        ctx.save();
+        ctx.font = 'italic 14px Georgia, serif';
+        ctx.textAlign = 'center';
+        ctx.fillStyle = '#fff0c8';
+        ctx.shadowColor = '#2b1608'; ctx.shadowBlur = 5;
+        ctx.fillText('Press E to visit', sx, sy + 18);
+        ctx.restore();
+      }
+    },
+
+    draw(ctx) {
+      drawLetterbox(ctx);
+      const D = G.WORLD, v = this.view();
+      ctx.drawImage(G.images[D.img], v.ox, v.oy, D.w * v.s, D.h * v.s);
+      const near = this.hotspotNear();
+      G.MAP_LOCATIONS.forEach(loc => this.drawLocation(ctx, loc, v, loc === near));
+
+      const actors = this.people.map(person => ({ type: 'npc', y: person.y, person }));
+      actors.push({ type: 'player', y: this.player.y, person: this.player });
+      actors.sort((a, b) => a.y - b.y).forEach(actor => {
+        const person = actor.person;
+        const sprite = actor.type === 'player' ? G.Sprites.mari : G.Sprites.customers[person.lookIdx];
+        G.drawSprite(ctx, sprite, v.ox + person.x * v.s, v.oy + person.y * v.s, D.playerH * v.s, {
+          walking: actor.type === 'player' ? person.walking : true,
+          flip: person.flip, view: person.dir, time: this.t + (person.lookIdx || 0) * .17
+        });
+        if (actor.type === 'npc' && G.dist(this.player.x, this.player.y, person.x, person.y) < 170)
+          drawNamePill(ctx, v.ox + person.x * v.s, v.oy + (person.y - D.playerH - 17) * v.s, person.name);
+      });
+
+      ctx.save();
+      const title = 'AUBERLIN  ·  OPEN TOWN';
+      ctx.font = 'small-caps bold 18px Georgia, serif';
+      const tw = ctx.measureText(title).width;
+      G.rrect(ctx, G.W - tw - 54, 18, tw + 34, 38, 18);
+      ctx.fillStyle = 'rgba(48,29,16,.86)'; ctx.fill();
+      ctx.strokeStyle = '#d0aa65'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.fillStyle = '#f6e5bc'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(title, G.W - tw / 2 - 37, 37);
+      ctx.restore();
+      drawVignette(ctx);
+      G.drawFade(ctx);
+    }
+  };
+
   // ---------------- EXTERIOR ----------------
   const Ext = {
     t: 0,
@@ -546,7 +774,7 @@ window.G = window.G || {};
             { walking: p.walking, flip: p.flip, view: p.dir, time: this.t });
         } else {
           if (a.kind === 'mother') {
-            G.drawSprite(ctx, G.Sprites.elise, v.ox + 610 * v.s, v.oy + 790 * v.s, (D.playerH + 8) * v.s,
+            G.drawSprite(ctx, G.Sprites.elise, v.ox + 610 * v.s, v.oy + 790 * v.s, D.playerH * v.s,
               { walking: false, view: 'front', time: this.t + 1.8 });
             drawNamePill(ctx, v.ox + 610 * v.s, v.oy + (790 - D.playerH - 20) * v.s, 'Elise · Mother');
             continue;
@@ -669,7 +897,7 @@ window.G = window.G || {};
       G.Audio.play('click');
       if (h.id === 'exit') {
         G.Audio.play('door');
-        G.UI.openMapPanel();
+        G.transition(() => G.setMode('world', { location: 'home' }));
       } else if (h.id === 'kitchen') {
         G.UI.openHomePanel();
       } else if (h.id === 'bed' && G.Management.ensure().mother.status !== 'working') {
@@ -708,7 +936,7 @@ window.G = window.G || {};
       if (motherHome) actors.push({ kind: 'mother', x: 525, y: 695 });
       actors.sort((a, b) => a.y - b.y).forEach(actor => {
         const sprite = actor.kind === 'mother' ? G.Sprites.elise : G.Sprites.mari;
-        G.drawSprite(ctx, sprite, v.ox + actor.x * v.s, v.oy + actor.y * v.s, (D.playerH + (actor.kind === 'mother' ? 5 : 0)) * v.s,
+        G.drawSprite(ctx, sprite, v.ox + actor.x * v.s, v.oy + actor.y * v.s, D.playerH * v.s,
           { walking: actor.kind === 'player' && p.walking, flip: actor.kind === 'player' && p.flip, view: actor.kind === 'player' ? p.dir : 'front', time: this.t });
         if (actor.kind === 'mother') drawNamePill(ctx, v.ox + actor.x * v.s, v.oy + (actor.y - D.playerH - 18) * v.s, 'Elise · resting');
       });
@@ -718,6 +946,7 @@ window.G = window.G || {};
     },
   };
 
+  G.modes.world = World;
   G.modes.exterior = Ext;
   G.modes.interior = Int;
   G.modes.home = Home;

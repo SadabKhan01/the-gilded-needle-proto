@@ -57,6 +57,10 @@ Issues are ordered for a layered build. Each item is small enough to become a Gi
 - [ ] GN-308 P1 Add supplier stock calendars, price bands, and relationship discounts.
 - [ ] GN-309 P1 Add material reservation and provenance fields.
 - [ ] GN-310 P2 Add route planning and hireable material runner.
+- [x] GN-311 P0 Add camera-scrolling open-town traversal across the full supplied map.
+- [x] GN-312 P0 Add walk-up arrival points and connected road collision for all eight destinations.
+- [x] GN-313 P0 Add six illustrated roaming townspeople at the player's normalized scale.
+- [ ] GN-314 P1 Add dedicated walkable supplier and brickworks interiors.
 
 ## Milestone 4 - tailoring depth
 
@@ -92,6 +96,8 @@ Issues are ordered for a layered build. Each item is small enough to become a Gi
 - [ ] GN-608 P1 Add mother, home, brickworks, and letter musical motifs.
 - [ ] GN-609 P1 Add mobile/touch layout and responsive UI.
 - [ ] GN-610 P1 Add localization-safe layout and externalized narrative strings.
+- [x] GN-611 P0 Replace generic location emoji with an original Victorian SVG crest family.
+- [x] GN-612 P0 Anchor character animation at the feet and remove whole-body movement bobbing.
 
 ## Milestone 7 - quality and release
 

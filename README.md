@@ -1,8 +1,8 @@
 # The Gilded Needle — Image-Backed Prototype
 
-A cozy 2D tailor-shop RPG prototype. The three painted scenes (`assets/`) are used as
-full-screen backgrounds; the playable character, hotspots, customers, mini-games and UI
-are layered on top — no tile engine.
+A cozy 2D tailor-shop RPG prototype. Painted scenes (`assets/`) form a camera-scrolling
+town, shopfront, workroom, and family home; illustrated characters, hotspots, customers,
+mini-games, and a royal-classic UI are layered on top — no tile engine or build step.
 
 **Story:** Auberlin, 1972. Mari Thimm grew up in Cinder Row and spent six years carrying
 bricks beside her mother Elise and brother Tomas. Taught to sew by her late grandmother
@@ -32,8 +32,10 @@ then open http://localhost:8642. No build step, no dependencies.
 |---|---|
 | Exterior scene | supplied sunny Spindle Square painting with the tailor shop, fountain, carriage, and flower conservatory |
 | Interior scene | full walkable shop with furniture collision + vertical camera |
-| Illustrated characters | Mari and Elise are runtime cutouts from the supplied character-sheet references |
-| Town navigation | top-left map bar opens the supplied Auberlin map with eight clickable destinations |
+| Illustrated characters | Mari and Elise use supplied reference art; six new Victorian townspeople roam at one normalized character scale |
+| Open-world Auberlin | camera-scrolling two-dimensional town with connected roads, click/keyboard movement, roaming NPCs, and eight walk-up destinations |
+| Town navigation | top-left Auberlin crest enters the world; in town it opens the supplied roadmap for fast travel |
+| Victorian identities | eight original SVG crests replace generic emoji for the tailor, suppliers, home, quay, and brickworks |
 | Family home | walkable generated bare-home scene with one bed, one oil light, and an empty kitchen |
 | Customers | doorbell rings, customer walks to the counter, places a persistent sew or outfit order |
 | Custom garment orders | collect cloth, thread, buttons, lace, ribbon, or zippers before cutting and sewing |
@@ -50,8 +52,8 @@ then open http://localhost:8642. No build step, no dependencies.
 - `js/engine.js` — canvas, input, WebAudio synth, save/load, mode loop
 - `js/data.js` — all content: hotspot coordinates (image space), wardrobe catalog, fabrics, dialogue, memories
 - `js/management.js` — clock, bills, cleanliness, coffee, home comfort, staffing and mother health
-- `js/sprites.js` — supplied-sheet cutout sprites for Mari/Elise plus procedural customers
-- `js/scenes.js` — exterior, shop, and family-home modes, movement, collision, customer flow
+- `js/sprites.js` — normalized supplied-sheet cutouts for Mari/Elise and illustrated townspeople
+- `js/scenes.js` — open town, exterior, shop, and family-home modes, road/furniture collision, customer flow
 - `js/minigames.js` — title, intro, flashbacks, wardrobe dress-up, sewing game
 - `js/ui.js` — DOM HUD, dialogue box, panels, toasts, order book
 
@@ -64,6 +66,7 @@ then open http://localhost:8642. No build step, no dependencies.
 - `graphify-out/graph.html` — interactive knowledge graph for code, design and reference art
 - `tests/management-smoke.js` — save/load and management-system smoke coverage
 
-## Next locations (planned)
+## Next world layer (planned)
 
-Brick factory, current family home, sheep farm, fabric market, charity shop, docks, town streets.
+Dedicated walkable interiors for Briar Farm, Muslin Works, Ribbon Row, Second Stitch,
+Ashford Brickworks, and Madder Quay; district ambient audio; schedules and supplier quests.

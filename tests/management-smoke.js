@@ -43,6 +43,14 @@ G.Management.ensure();
 assert.equal(G.S.management.day, 1);
 assert.equal(G.S.management.cleanliness, 82);
 assert.equal(G.S.materials.thread, 4);
+assert.equal(G.MAP_LOCATIONS.length, 8);
+assert.ok(G.MAP_LOCATIONS.every(loc => loc.logo.endsWith('.svg')));
+assert.ok(G.MAP_LOCATIONS.every(loc => Number.isFinite(loc.walkX) && Number.isFinite(loc.walkY)));
+assert.ok(G.WORLD.roadNodes.length >= 25);
+assert.ok(G.WORLD.roadEdges.length >= 30);
+for (const loc of G.MAP_LOCATIONS) assert.ok(fs.existsSync(path.join(root, loc.logo)), `missing crest: ${loc.logo}`);
+assert.ok(fs.existsSync(path.join(root, 'assets/auberlin-open-world.png')));
+assert.ok(fs.existsSync(path.join(root, 'assets/auberlin-npcs.png')));
 
 const dressOrder = {
   kind: 'sew', status: 'open', name: 'Material test', fabric: 'gingham_red',

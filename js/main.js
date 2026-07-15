@@ -16,8 +16,18 @@ window.G = window.G || {};
       home_upgrades: 'assets/home-upgrades.png',
       wardrobe: 'assets/wardrobe.png',
       town_map: 'assets/reference/auberlin-town-map.png',
+      world: 'assets/auberlin-open-world.png',
+      npc_sheet: 'assets/auberlin-npcs.png',
       marielle_sheet: 'assets/reference/marielle-character-sheet.png',
       elise_sheet: 'assets/reference/grandmother-character-sheet.png',
+      logo_tailor: 'assets/logos/tailor.svg',
+      logo_sheep_farm: 'assets/logos/sheep-farm.svg',
+      logo_muslin_factory: 'assets/logos/muslin-factory.svg',
+      logo_fabric_store: 'assets/logos/fabric-store.svg',
+      logo_charity_store: 'assets/logos/charity-store.svg',
+      logo_brickworks: 'assets/logos/brickworks.svg',
+      logo_home: 'assets/logos/home.svg',
+      logo_ship_deck: 'assets/logos/ship-deck.svg',
     }, () => {
       G.Sprites.init();
       G.setMode('title');

@@ -41,39 +41,61 @@ window.G = window.G || {};
 
   // Positions are percentages over the supplied illustrated town map.
   G.MAP_LOCATIONS = [
-    { id: 'tailor', title: 'The Gilded Needle', icon: '🪡', x: 39, y: 48, action: 'tailor', note: 'Return to Mari and Elise at Spindle Square.' },
-    { id: 'sheep_farm', title: 'Sheep Farm', icon: '🐑', x: 17, y: 21, supplier: 'sheep_farm', note: 'Local wool and sturdy green plaid.' },
-    { id: 'muslin_factory', title: 'Muslin Factory', icon: '🏭', x: 46, y: 12, supplier: 'muslin_factory', note: 'Cotton, linen, and dependable thread.' },
-    { id: 'fabric_store', title: 'Ribbon Row Fabrics', icon: '🧶', x: 35, y: 43, supplier: 'fabric_store', note: 'Everyday cloth, buttons, ribbon, and zippers.' },
-    { id: 'charity_store', title: 'Charity Store', icon: '♻️', x: 54, y: 42, supplier: 'charity_store', note: 'Small discounted bundles with limited choice.' },
-    { id: 'brickworks', title: 'Ashford Brickworks', icon: '🧱', x: 82, y: 14, action: 'brickworks', note: 'The old works where Mari and Elise saved for the shop.' },
-    { id: 'home', title: 'Thimm Family Home', icon: '🏠', x: 44, y: 69, action: 'home', note: 'Check on Mother and the comfort of home.' },
-    { id: 'ship_deck', title: 'Ship Deck Market', icon: '⚓', x: 84, y: 78, supplier: 'ship_deck', note: 'Imported silk, lace, ribbon, and fine fastenings.' },
+    { id: 'tailor', title: 'The Gilded Needle', logo: 'assets/logos/tailor.svg', x: 39, y: 48, walkX: 43, walkY: 49, action: 'tailor', note: 'Return to Mari and Elise at Spindle Square.' },
+    { id: 'sheep_farm', title: 'Briar Sheep Farm', logo: 'assets/logos/sheep-farm.svg', x: 17, y: 21, walkX: 24, walkY: 27, supplier: 'sheep_farm', note: 'Local wool and sturdy green plaid.' },
+    { id: 'muslin_factory', title: 'Auberlin Muslin Works', logo: 'assets/logos/muslin-factory.svg', x: 46, y: 12, walkX: 43, walkY: 24, supplier: 'muslin_factory', note: 'Cotton, linen, and dependable thread.' },
+    { id: 'fabric_store', title: 'Ribbon Row Fabrics', logo: 'assets/logos/fabric-store.svg', x: 35, y: 43, walkX: 37, walkY: 44, supplier: 'fabric_store', note: 'Everyday cloth, buttons, ribbon, and zippers.' },
+    { id: 'charity_store', title: 'Second Stitch Charity Shop', logo: 'assets/logos/charity-store.svg', x: 54, y: 42, walkX: 55, walkY: 48, supplier: 'charity_store', note: 'Small discounted bundles with limited choice.' },
+    { id: 'brickworks', title: 'Ashford Brickworks', logo: 'assets/logos/brickworks.svg', x: 82, y: 14, walkX: 72, walkY: 24, action: 'brickworks', note: 'The old works where Mari and Elise saved for the shop.' },
+    { id: 'home', title: 'Thimm Family Home', logo: 'assets/logos/home.svg', x: 44, y: 69, walkX: 45, walkY: 63, action: 'home', note: 'Check on Mother and the comfort of home.' },
+    { id: 'ship_deck', title: 'Madder Quay Imports', logo: 'assets/logos/ship-deck.svg', x: 84, y: 78, walkX: 76, walkY: 76, supplier: 'ship_deck', note: 'Imported silk, lace, ribbon, and fine fastenings.' },
   ];
+
+  // Auberlin is a camera-scrolling town rather than a row of menu destinations.
+  // Roads are stored as normalized coordinates so the world can grow without
+  // repainting the traversal code. Broad radii include pavements and squares.
+  G.WORLD = {
+    img: 'world', w: 2508, h: 1412, playerH: 160, roadRadius: 70,
+    roadNodes: [
+      [24, 27], [24, 18], [32, 24], [43, 24], [50, 29], [31, 40],
+      [37, 44], [43, 49], [55, 48], [65, 42], [72, 24], [83, 28],
+      [84, 44], [53, 57], [45, 63], [34, 63], [25, 66], [18, 75],
+      [43, 82], [61, 74], [76, 76], [76, 57], [17, 43], [25, 50],
+      [40, 32], [61, 28], [68, 34], [66, 83], [70, 67], [59, 47]
+    ],
+    roadEdges: [
+      [0, 1], [1, 2], [2, 3], [3, 4], [0, 22], [22, 23], [23, 5],
+      [5, 6], [6, 24], [24, 3], [24, 7], [7, 8], [8, 29], [29, 9],
+      [9, 26], [26, 25], [25, 4], [26, 10], [10, 11], [11, 12],
+      [12, 21], [21, 9], [7, 13], [13, 14], [14, 15], [15, 23],
+      [15, 16], [16, 17], [17, 18], [18, 14], [13, 29], [13, 19],
+      [19, 28], [28, 21], [28, 20], [20, 27], [27, 19], [27, 18]
+    ]
+  };
 
   G.SUPPLIERS = {
     sheep_farm: {
-      title: 'Briar Sheep Farm', portrait: '🐑', modifier: 0.9,
+      title: 'Briar Sheep Farm', logo: 'assets/logos/sheep-farm.svg', modifier: 0.9,
       desc: 'Farm wool is strong, warm, and cheaper when Mari makes the trip herself.',
       fabrics: ['wool_sage', 'plaid_green'], materials: ['thread'],
     },
     muslin_factory: {
-      title: 'Auberlin Muslin Works', portrait: '🏭', modifier: 0.9,
+      title: 'Auberlin Muslin Works', logo: 'assets/logos/muslin-factory.svg', modifier: 0.9,
       desc: 'Factory ends and dependable bolts for everyday commissions.',
       fabrics: ['linen_cream', 'cotton_lavender', 'gingham_blue'], materials: ['thread', 'buttons'],
     },
     fabric_store: {
-      title: 'Ribbon Row Fabrics', portrait: '🧶', modifier: 1,
+      title: 'Ribbon Row Fabrics', logo: 'assets/logos/fabric-store.svg', modifier: 1,
       desc: 'The broadest practical selection in town, sold one dress-length at a time.',
       fabrics: ['gingham_red', 'gingham_blue', 'gingham_pink', 'plaid_brown', 'plaid_green'], materials: ['thread', 'buttons', 'ribbon', 'zipper'],
     },
     charity_store: {
-      title: 'Second Stitch Charity Shop', portrait: '♻️', modifier: 0.7,
+      title: 'Second Stitch Charity Shop', logo: 'assets/logos/charity-store.svg', modifier: 0.7,
       desc: 'Donated remnants are inexpensive, but the selection is never guaranteed.',
       fabrics: ['gingham_red', 'plaid_brown', 'linen_cream'], materials: ['buttons', 'lace'],
     },
     ship_deck: {
-      title: 'Madder Quay Imports', portrait: '⚓', modifier: 1.25,
+      title: 'Madder Quay Imports', logo: 'assets/logos/ship-deck.svg', modifier: 1.25,
       desc: 'Fine imported cloth and finishing notions for customers who expect something special.',
       fabrics: ['silk_rose', 'cotton_lavender'], materials: ['lace', 'ribbon', 'zipper'],
     },
@@ -213,7 +235,7 @@ window.G = window.G || {};
     w: 1672, h: 941,
     groundY: 858,          // player's feet line
     minX: 55, maxX: 1615,
-    playerH: 142,
+    playerH: 160,
     start: { x: 610 },
     hotspots: [
       { id: 'door', label: 'Enter the tailor shop', x: 360, y: 805, r: 110, icon: '🚪' },
@@ -239,7 +261,7 @@ window.G = window.G || {};
   G.INTERIOR = {
     img: 'interior',
     w: 941, h: 1672,
-    playerH: 118,
+    playerH: 154,
     bounds: { minX: 78, maxX: 872, minY: 120, maxY: 1610 },
     start: { x: 465, y: 1520 },     // just inside the door
     doorSpot: { x: 465, y: 1590 },
@@ -296,7 +318,7 @@ window.G = window.G || {};
   G.HOME = {
     img: 'home',
     w: 1672, h: 941,
-    playerH: 132,
+    playerH: 156,
     bounds: { minX: 150, maxX: 1515, minY: 325, maxY: 815 },
     start: { x: 835, y: 790 },
     blocks: [
