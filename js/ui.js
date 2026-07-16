@@ -50,7 +50,7 @@ window.G = window.G || {};
       ui = $('#ui');
       ui.innerHTML = `
         <div id="hud" style="display:none">
-          <div class="chip btn map-chip" id="btn-map"><img src="assets/logos/tailor.svg" alt=""><b>Explore Auberlin</b></div>
+          <div class="chip btn map-chip" id="btn-map"><img src="assets/logos/tailor.svg" alt=""><b>Auberlin Map</b></div>
           <div class="chip" id="coins-chip">🪙 <b>0</b></div>
           <div class="chip" id="day-chip">Day <b>1</b> · 8:00</div>
           <div class="chip btn" id="btn-orders">📜 Orders <b id="order-count">0</b></div>
@@ -65,13 +65,7 @@ window.G = window.G || {};
         </div>`;
       hud = $('#hud'); dlg = $('#dialogue'); toasts = $('#toasts');
 
-      $('#btn-map').addEventListener('click', () => {
-        if (G.modeName === 'world') this.openMapPanel();
-        else {
-          this.closePanel();
-          G.transition(() => G.setMode('world', { location: G.S.currentLocation || 'tailor' }));
-        }
-      });
+      $('#btn-map').addEventListener('click', () => this.openMapPanel());
       $('#btn-orders').addEventListener('click', () => this.openOrdersPanel());
       $('#btn-fabrics').addEventListener('click', () => this.openFabricsPanel());
       $('#btn-condition').addEventListener('click', () => this.openLedgerPanel());
@@ -226,7 +220,7 @@ window.G = window.G || {};
       const pins = G.MAP_LOCATIONS.map(loc =>
         `<button class="map-pin ${G.S.currentLocation === loc.id ? 'current' : ''}" data-map-location="${loc.id}" style="left:${loc.x}%;top:${loc.y}%" title="${loc.note}"><img src="${loc.logo}" alt=""><b>${loc.title}</b></button>`).join('');
       const el = this._openPanel(
-        `<h2 class="crest-heading"><img src="assets/logos/tailor.svg" alt="">Auberlin Town Map</h2><div class="sub">Choose where to begin exploring, then walk the connected roads. Crested suppliers sell the cloth and notions required by made-from-scratch orders.</div>
+        `<h2 class="crest-heading"><img src="assets/logos/tailor.svg" alt="">Auberlin Town Map</h2><div class="sub">Travel screen only — choose a landmark, then explore Auberlin through its connected street-level roads and shop districts.</div>
          <div class="town-map"><img src="assets/reference/auberlin-town-map.png" alt="Illustrated Auberlin town map">${pins}</div>`);
       el.classList.add('map-panel');
       el.querySelectorAll('[data-map-location]').forEach(pin => pin.addEventListener('click', () => this.openMapLocation(pin.dataset.mapLocation)));
@@ -237,8 +231,20 @@ window.G = window.G || {};
       if (!location) return;
       G.S.currentLocation = id;
       G.save();
-      this.closePanel();
-      G.transition(() => G.setMode('world', { location: location.id, fromMap: true }));
+      if (id === 'tailor') {
+        this.closePanel();
+        G.transition(() => G.setMode('exterior', { fromMap: true }));
+      } else if (id === 'home') {
+        this.closePanel();
+        G.transition(() => G.setMode('home', { fromMap: true }));
+      } else if (id === 'fabric_store') {
+        this.closePanel();
+        G.transition(() => G.setMode('world', { district: 'ribbon', x: 125 }));
+      } else if (id === 'charity_store') {
+        this.closePanel();
+        G.transition(() => G.setMode('world', { district: 'ribbon', x: 585 }));
+      } else if (location.action === 'brickworks') this.openBrickworksPanel();
+      else if (location.supplier) this.openSupplierPanel(location.supplier);
     },
 
     openSupplierPanel(supplierId) {

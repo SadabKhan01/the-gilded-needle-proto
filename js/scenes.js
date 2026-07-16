@@ -349,6 +349,181 @@ window.G = window.G || {};
     }
   };
 
+  // ---------------- STREET-LEVEL OPEN WORLD ----------------
+  // The illustrated town map is deliberately not used here. Version one's
+  // hub-and-portals structure is rebuilt as connected, street-level panoramas.
+  const StreetWorld = {
+    t: 0,
+    district: 'ribbon',
+    player: { x: 835, flip: false, walking: false },
+    target: null,
+    people: [],
+
+    data() { return G.STREETS[this.district]; },
+
+    enter(opts) {
+      opts = opts || {};
+      this.t = 0;
+      this.district = G.STREETS[opts.district] ? opts.district : 'ribbon';
+      if (document.body) document.body.dataset.district = this.district;
+      const D = this.data();
+      this.player.x = Number.isFinite(opts.x) ? G.clamp(opts.x, D.minX, D.maxX)
+        : opts.spawn === 'left' ? D.minX + 72
+        : opts.spawn === 'right' ? D.maxX - 72 : D.w / 2;
+      this.player.walking = false;
+      this.target = null;
+      this.seedPeople();
+      G.UI.showHUD(true);
+    },
+
+    seedPeople() {
+      const base = { cinder: 0, ribbon: 2, larkspur: 4, crownway: 1 }[this.district] || 0;
+      this.people = [0, 1, 2].map(i => ({
+        x: 330 + i * 500,
+        dir: i % 2 ? -1 : 1,
+        speed: 34 + i * 9,
+        lookIdx: (base + i) % G.Sprites.customers.length,
+        name: ['local shopper', 'shopkeeper', 'morning visitor'][i]
+      }));
+    },
+
+    view() {
+      const D = this.data();
+      const s = Math.min(G.W / D.w, G.H / D.h);
+      return { s, ox: (G.W - D.w * s) / 2, oy: (G.H - D.h * s) / 2 };
+    },
+
+    shopNear(x, range) {
+      let best = null, distance = Infinity;
+      for (const shop of this.data().shops) {
+        const d = Math.abs((x ?? this.player.x) - shop.x);
+        if (d < (range || 92) && d < distance) { best = shop; distance = d; }
+      }
+      return best;
+    },
+
+    travel(link) {
+      if (!link || G.Fade.dir !== 0) return;
+      G.Audio.play('door');
+      G.transition(() => {
+        if (link.mode === 'exterior') G.setMode('exterior', { fromStreet: link.spawn });
+        else G.setMode('world', { district: link.district, spawn: link.spawn });
+      });
+    },
+
+    interact(shop) {
+      G.Audio.play('click');
+      if (shop.supplier) G.UI.openSupplierPanel(shop.supplier);
+      else G.UI.say(shop.title, [shop.desc]);
+    },
+
+    updatePeople(dt) {
+      const D = this.data();
+      this.people.forEach(person => {
+        person.x += person.dir * person.speed * dt;
+        if (person.x < D.minX + 100) { person.x = D.minX + 100; person.dir = 1; }
+        if (person.x > D.maxX - 100) { person.x = D.maxX - 100; person.dir = -1; }
+      });
+    },
+
+    update(dt) {
+      this.t += dt;
+      G.updateFade(dt);
+      if (!G.UI.busy() && G.Fade.dir === 0) this.updatePeople(dt);
+      if (G.UI.busy() || G.Fade.dir !== 0) { this.player.walking = false; return; }
+      const D = this.data(), p = this.player, v = this.view();
+      let dx = G.Input.axis().x;
+
+      if (G.Input.mouse.clicked) {
+        if (G.Input.mouse.x < 54) { this.travel(D.left); return; }
+        if (G.Input.mouse.x > G.W - 54) { this.travel(D.right); return; }
+        const ix = G.clamp((G.Input.mouse.x - v.ox) / v.s, D.minX, D.maxX);
+        const clicked = this.shopNear(ix, 70), near = this.shopNear();
+        if (clicked && clicked === near) this.interact(clicked);
+        else this.target = ix;
+      }
+      if (dx) this.target = null;
+      if (this.target != null) {
+        const delta = this.target - p.x;
+        if (Math.abs(delta) < 7) {
+          this.target = null; dx = 0;
+          const shop = this.shopNear(); if (shop) this.interact(shop);
+        } else dx = Math.sign(delta);
+      }
+
+      p.walking = dx !== 0;
+      if (dx) {
+        p.flip = dx < 0;
+        p.x += dx * 285 * dt;
+        if (p.x <= D.minX) { p.x = D.minX; this.travel(D.left); }
+        else if (p.x >= D.maxX) { p.x = D.maxX; this.travel(D.right); }
+      }
+      if (G.Input.pressed('KeyE') || G.Input.pressed('Space')) {
+        const shop = this.shopNear(); if (shop) this.interact(shop);
+      }
+    },
+
+    drawShopMarker(ctx, shop, v, near) {
+      const sx = v.ox + shop.x * v.s;
+      const sy = v.oy + (this.data().groundY - 150) * v.s;
+      const pulse = near ? 1 + Math.sin(this.t * 4) * .06 : 1;
+      ctx.save();
+      ctx.translate(sx, sy); ctx.scale(pulse, pulse);
+      ctx.beginPath(); ctx.arc(0, 0, near ? 19 : 14, 0, Math.PI * 2);
+      ctx.fillStyle = near ? 'rgba(252,236,195,.97)' : 'rgba(55,33,20,.78)';
+      ctx.fill(); ctx.strokeStyle = near ? '#8a4b4f' : '#c9a45f'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.fillStyle = near ? '#6b303d' : '#f3dfb5';
+      ctx.font = `${near ? 17 : 13}px Georgia, serif`; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(shop.title.charAt(0), 0, 1);
+      ctx.restore();
+      if (near) {
+        drawNamePill(ctx, sx, sy - 36, shop.title);
+        ctx.save(); ctx.font = 'italic 13px Georgia, serif'; ctx.textAlign = 'center';
+        ctx.fillStyle = '#fff0c8'; ctx.shadowColor = '#2b1608'; ctx.shadowBlur = 4;
+        ctx.fillText('Press E to visit', sx, sy + 43); ctx.restore();
+      }
+    },
+
+    drawEdge(ctx, side, link) {
+      const x = side === 'left' ? 18 : G.W - 18;
+      ctx.save(); ctx.font = 'bold 15px Georgia, serif'; ctx.textBaseline = 'middle';
+      ctx.textAlign = side === 'left' ? 'left' : 'right';
+      ctx.fillStyle = '#f6e5bc'; ctx.shadowColor = '#2b1608'; ctx.shadowBlur = 5;
+      ctx.fillText(side === 'left' ? `← ${link.label}` : `${link.label} →`, x, G.H - 28);
+      ctx.restore();
+    },
+
+    draw(ctx) {
+      drawLetterbox(ctx);
+      const D = this.data(), v = this.view(), near = this.shopNear();
+      ctx.drawImage(G.images[D.img], v.ox, v.oy, D.w * v.s, D.h * v.s);
+      D.shops.forEach(shop => this.drawShopMarker(ctx, shop, v, shop === near));
+
+      const actors = this.people.map(person => ({ npc: true, x: person.x, person }));
+      actors.push({ npc: false, x: this.player.x, person: this.player });
+      actors.sort((a, b) => a.x - b.x).forEach(actor => {
+        const person = actor.person;
+        const sprite = actor.npc ? G.Sprites.customers[person.lookIdx] : G.Sprites.mari;
+        G.drawSprite(ctx, sprite, v.ox + person.x * v.s, v.oy + D.groundY * v.s, D.playerH * v.s, {
+          walking: actor.npc ? true : person.walking,
+          flip: actor.npc ? person.dir < 0 : person.flip,
+          view: 'front', time: this.t + (person.lookIdx || 0) * .2
+        });
+      });
+
+      this.drawEdge(ctx, 'left', D.left); this.drawEdge(ctx, 'right', D.right);
+      ctx.save();
+      ctx.font = 'small-caps bold 19px Georgia, serif';
+      const title = `${D.name}  ·  ${D.subtitle}`;
+      const tw = ctx.measureText(title).width;
+      G.rrect(ctx, G.W - tw - 38, 66, tw + 24, 34, 16);
+      ctx.fillStyle = 'rgba(48,29,16,.86)'; ctx.fill(); ctx.strokeStyle = '#d0aa65'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.fillStyle = '#f6e5bc'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(title, G.W - tw / 2 - 26, 83); ctx.restore();
+      drawVignette(ctx); G.drawFade(ctx);
+    }
+  };
+
   // ---------------- EXTERIOR ----------------
   const Ext = {
     t: 0,
@@ -357,7 +532,10 @@ window.G = window.G || {};
 
     enter(opts) {
       this.t = 0;
-      this.player.x = opts.fromDoor ? G.EXTERIOR.hotspots[0].x : G.EXTERIOR.start.x;
+      if (document.body) delete document.body.dataset.district;
+      this.player.x = opts.fromStreet === 'left' ? G.EXTERIOR.minX + 85
+        : opts.fromStreet === 'right' ? G.EXTERIOR.maxX - 85
+        : opts.fromDoor ? G.EXTERIOR.hotspots[0].x : G.EXTERIOR.start.x;
       this.target = null;
       G.UI.showHUD(true);
       if (!this._welcomed && !opts.fromDoor) {
@@ -385,6 +563,14 @@ window.G = window.G || {};
 
       // click: hotspot or walk target
       if (G.Input.mouse.clicked) {
+        if (G.Input.mouse.x < 54) {
+          G.transition(() => G.setMode('world', { district: 'cinder', spawn: 'right' }));
+          return;
+        }
+        if (G.Input.mouse.x > G.W - 54) {
+          G.transition(() => G.setMode('world', { district: 'larkspur', spawn: 'left' }));
+          return;
+        }
         const ix = (G.Input.mouse.x - v.ox) / v.s;
         const hs = this.hotspotNear(ix, 999999);
         const near = this.hotspotNear(p.x);
@@ -399,7 +585,17 @@ window.G = window.G || {};
       }
 
       p.walking = dx !== 0;
-      if (dx !== 0) { p.flip = dx < 0; p.x = G.clamp(p.x + dx * speed * dt, D.minX, D.maxX); }
+      if (dx !== 0) {
+        p.flip = dx < 0;
+        const nx = p.x + dx * speed * dt;
+        if (nx < D.minX) {
+          p.x = D.minX;
+          G.transition(() => G.setMode('world', { district: 'cinder', spawn: 'right' }));
+        } else if (nx > D.maxX) {
+          p.x = D.maxX;
+          G.transition(() => G.setMode('world', { district: 'larkspur', spawn: 'left' }));
+        } else p.x = nx;
+      }
 
       if (G.Input.pressed('KeyE') || G.Input.pressed('Space')) {
         const hs = this.hotspotNear(p.x);
@@ -421,6 +617,10 @@ window.G = window.G || {};
       if (h.id === 'door') {
         G.Audio.play('door');
         G.transition(() => G.setMode('interior', { fromDoor: true }));
+      } else if (h.id === 'fountain') {
+        G.transition(() => G.setMode('world', { district: 'ribbon' }));
+      } else if (h.id === 'carriage') {
+        G.transition(() => G.setMode('world', { district: 'crownway' }));
       } else {
         const lines = G.EXTERIOR_FLAVOR[h.id];
         if (lines) G.UI.say('Mari', lines);
@@ -441,6 +641,9 @@ window.G = window.G || {};
       G.drawSprite(ctx, G.Sprites.mari, v.ox + this.player.x * v.s, v.oy + D.groundY * v.s,
         D.playerH * v.s, { walking: this.player.walking, flip: this.player.flip, time: this.t });
       if (near && !G.UI.busy()) drawPrompt(ctx, v.ox + near.x * v.s, v.oy + (near.y - 60) * v.s, near.icon, near.label, this.t);
+
+      StreetWorld.drawEdge(ctx, 'left', { label: 'Cinder Row' });
+      StreetWorld.drawEdge(ctx, 'right', { label: 'Larkspur Boulevard' });
 
       drawVignette(ctx);
       G.drawFade(ctx);
@@ -897,7 +1100,7 @@ window.G = window.G || {};
       G.Audio.play('click');
       if (h.id === 'exit') {
         G.Audio.play('door');
-        G.transition(() => G.setMode('world', { location: 'home' }));
+        G.transition(() => G.setMode('exterior', { fromHome: true }));
       } else if (h.id === 'kitchen') {
         G.UI.openHomePanel();
       } else if (h.id === 'bed' && G.Management.ensure().mother.status !== 'working') {
@@ -946,7 +1149,7 @@ window.G = window.G || {};
     },
   };
 
-  G.modes.world = World;
+  G.modes.world = StreetWorld;
   G.modes.exterior = Ext;
   G.modes.interior = Int;
   G.modes.home = Home;

@@ -1,17 +1,17 @@
 {
   "js/data.js": {
-    "mtime": 1784093786.3958488,
-    "ast_hash": "554e5003c23917c8ba1284eab7518739",
+    "mtime": 1784096027.3740938,
+    "ast_hash": "834ed65f0bf3780d884fda59ec7a2309",
     "semantic_hash": ""
   },
   "js/engine.js": {
-    "mtime": 1784086611.4886055,
-    "ast_hash": "e082d4cc23cdacb261ddafb2853fe22c",
-    "semantic_hash": "e082d4cc23cdacb261ddafb2853fe22c"
+    "mtime": 1784160105.3820767,
+    "ast_hash": "ded988dd6f59cc1715c19dff39e75b54",
+    "semantic_hash": ""
   },
   "js/main.js": {
-    "mtime": 1784093211.9329345,
-    "ast_hash": "7452fa96a8cb1351b852f90d34ad1077",
+    "mtime": 1784095850.9660354,
+    "ast_hash": "26fb38c277e67fca5c3deaf2550d726a",
     "semantic_hash": ""
   },
   "js/management.js": {
@@ -25,8 +25,8 @@
     "semantic_hash": "76dc6ccff84bfbcbcffae6e6e58a1836"
   },
   "js/scenes.js": {
-    "mtime": 1784093844.4901724,
-    "ast_hash": "e85d9f8f2a6e64ed25fd42f8a1bcfcad",
+    "mtime": 1784160105.3826518,
+    "ast_hash": "6382f6dd427735a37108ffdea276099c",
     "semantic_hash": ""
   },
   "js/sprites.js": {
@@ -35,18 +35,18 @@
     "semantic_hash": ""
   },
   "js/ui.js": {
-    "mtime": 1784093374.4962308,
-    "ast_hash": "696fe91d0097052e0b7aa2779d69451c",
+    "mtime": 1784096062.2686498,
+    "ast_hash": "c12385d6c317e67082be8946657519a8",
     "semantic_hash": ""
   },
   "tests/management-smoke.js": {
-    "mtime": 1784093903.6071167,
-    "ast_hash": "49a3f578cd323f0ece82f05b16a6c140",
+    "mtime": 1784159357.309152,
+    "ast_hash": "6843dc01d300cf77d8eee969eca81ac5",
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1784094231.9510589,
-    "ast_hash": "4cd36f948ac46a91a1ed97286ad47e97",
+    "mtime": 1784159357.3081205,
+    "ast_hash": "0122b7e9ecb4f997edc76b43ba8129dc",
     "semantic_hash": ""
   },
   "assets/reference/README.md": {
@@ -55,13 +55,13 @@
     "semantic_hash": "114621f628033826f11993456b608d95"
   },
   "design/ASSET_MANIFEST.md": {
-    "mtime": 1784094231.9513793,
-    "ast_hash": "9272b0a93d4d2144eaa9d1a38c42304e",
+    "mtime": 1784159357.3085227,
+    "ast_hash": "d18076b5d69169a399125dfd10b7d54d",
     "semantic_hash": ""
   },
   "design/ISSUES.md": {
-    "mtime": 1784094231.9516597,
-    "ast_hash": "839a478b14c4e6275fde73e4d9c5619a",
+    "mtime": 1784159357.3087935,
+    "ast_hash": "6081be9abdc8a4dac1e650fcbdfb4cf3",
     "semantic_hash": ""
   },
   "design/PRODUCT_PLAN.md": {
@@ -70,9 +70,9 @@
     "semantic_hash": "4fdff239b1a2c15accfdc3f0cda2f0e8"
   },
   "index.html": {
-    "mtime": 1784083559.1153624,
-    "ast_hash": "04c0af1b44a70410d5c79d4aa3287b9a",
-    "semantic_hash": "04c0af1b44a70410d5c79d4aa3287b9a"
+    "mtime": 1784160518.2293105,
+    "ast_hash": "4980e41b664f119d1b0762d0874951bd",
+    "semantic_hash": ""
   },
   "assets/exterior.png": {
     "mtime": 1784083195.3508801,
@@ -172,6 +172,26 @@
   "assets/logos/tailor.svg": {
     "mtime": 1784092998.5472486,
     "ast_hash": "f596cac4b2e03cb8c6a9003514587a89",
+    "semantic_hash": ""
+  },
+  "assets/street-cinder-row.png": {
+    "mtime": 1784095718.273202,
+    "ast_hash": "a58f29dee789e7bb757a0ec436f45f0c",
+    "semantic_hash": ""
+  },
+  "assets/street-crownway.png": {
+    "mtime": 1784095718.2866426,
+    "ast_hash": "9aed841ff34d01332b13caec1a2b6caa",
+    "semantic_hash": ""
+  },
+  "assets/street-larkspur.png": {
+    "mtime": 1784095718.2828166,
+    "ast_hash": "37dfa2c32306e8313f4e7be49a389a66",
+    "semantic_hash": ""
+  },
+  "assets/street-ribbon-row.png": {
+    "mtime": 1784095718.278925,
+    "ast_hash": "8da157a94866764892ea0694f11eb6fe",
     "semantic_hash": ""
   }
 }

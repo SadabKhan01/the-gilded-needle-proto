@@ -1,7 +1,7 @@
 # The Gilded Needle — Image-Backed Prototype
 
-A cozy 2D tailor-shop RPG prototype. Painted scenes (`assets/`) form a camera-scrolling
-town, shopfront, workroom, and family home; illustrated characters, hotspots, customers,
+A cozy 2D tailor-shop RPG prototype. Painted scenes (`assets/`) form a connected
+street-level town, shopfront, workroom, and family home; illustrated characters, hotspots, customers,
 mini-games, and a royal-classic UI are layered on top — no tile engine or build step.
 
 **Story:** Auberlin, 1972. Mari Thimm grew up in Cinder Row and spent six years carrying
@@ -33,8 +33,9 @@ then open http://localhost:8642. No build step, no dependencies.
 | Exterior scene | supplied sunny Spindle Square painting with the tailor shop, fountain, carriage, and flower conservatory |
 | Interior scene | full walkable shop with furniture collision + vertical camera |
 | Illustrated characters | Mari and Elise use supplied reference art; six new Victorian townspeople roam at one normalized character scale |
-| Open-world Auberlin | camera-scrolling two-dimensional town with connected roads, click/keyboard movement, roaming NPCs, and eight walk-up destinations |
-| Town navigation | top-left Auberlin crest enters the world; in town it opens the supplied roadmap for fast travel |
+| Open-world Auberlin | version-one hub structure: playable Spindle Square plus Cinder Row, Ribbon Row, Larkspur Boulevard, and Crownway street scenes connected by road portals |
+| Shopping streets | four street-level panoramas, 28 visible shops, roaming NPCs, click/keyboard movement, and supplier interactions |
+| Town navigation | top-left Auberlin crest opens the supplied roadmap as a travel screen only; the map itself is never walkable |
 | Victorian identities | eight original SVG crests replace generic emoji for the tailor, suppliers, home, quay, and brickworks |
 | Family home | walkable generated bare-home scene with one bed, one oil light, and an empty kitchen |
 | Customers | doorbell rings, customer walks to the counter, places a persistent sew or outfit order |
@@ -53,7 +54,7 @@ then open http://localhost:8642. No build step, no dependencies.
 - `js/data.js` — all content: hotspot coordinates (image space), wardrobe catalog, fabrics, dialogue, memories
 - `js/management.js` — clock, bills, cleanliness, coffee, home comfort, staffing and mother health
 - `js/sprites.js` — normalized supplied-sheet cutouts for Mari/Elise and illustrated townspeople
-- `js/scenes.js` — open town, exterior, shop, and family-home modes, road/furniture collision, customer flow
+- `js/scenes.js` — connected street districts, Spindle Square hub, shop, family home, movement, portals, and customer flow
 - `js/minigames.js` — title, intro, flashbacks, wardrobe dress-up, sewing game
 - `js/ui.js` — DOM HUD, dialogue box, panels, toasts, order book
 

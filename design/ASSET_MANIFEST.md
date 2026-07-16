@@ -25,7 +25,8 @@ The PDF's third page is blank and is intentionally not retained. The PDF had no 
 
 ## P0 generated/created assets
 
-0. Open-world Auberlin background: label-free, road-connected town painting derived from the supplied map and curated as `assets/auberlin-open-world.png`.
+0. Retired exploration experiment: `assets/auberlin-open-world.png` is retained for provenance but is not preloaded or used as a walkable scene.
+0. Street-world districts: Cinder Row, Ribbon Row, Larkspur Boulevard, and Crownway, each a 1672×941 street-level panorama with seven distinct shops and a clear continuous walking lane.
 0. Victorian townspeople sheet: six equal-height full-body residents on transparency, curated as `assets/auberlin-npcs.png`.
 0. Location crest family: eight original code-native SVG emblems in `assets/logos/` for the tailor, farm, muslin works, fabric shop, charity shop, brickworks, home, and quay.
 
@@ -43,7 +44,7 @@ The PDF's third page is blank and is intentionally not retained. The PDF had no 
 
 ### Open-world Auberlin
 
-Use case: stylized-concept/edit. Asset: 16:9 isometric town exploration background. Primary request: remove every title, banner, label, and UI element from the supplied Auberlin map while preserving its recognizable geography; widen and connect the cobbled roads between sheep farm, muslin works, both brickworks, eastern working districts, estates, central shops, residences, and southeast ship deck. Rich hand-painted Victorian/Belle Époque atmosphere, autumn greenery, readable roads, no people, no text, no watermark. Generated with the built-in ChatGPT image-generation tool and curated into `assets/auberlin-open-world.png`.
+Use case: historical-scene. Assets: four 16:9 street-level playable backgrounds. Primary request: use the supplied Spindle Square image as a strict style, lighting, architectural-detail, cobblestone, ironwork, and foliage reference while creating new districts rather than copying its composition. Each panorama places seven distinct Victorian/Belle Époque storefronts on one consistent ground line with a broad unobstructed cobbled lane across the bottom 30 percent and visible continuation at both edges. No people, vehicles, readable text, UI, or watermark. Generated with the built-in ChatGPT image-generation tool and curated as `assets/street-cinder-row.png`, `assets/street-ribbon-row.png`, `assets/street-larkspur.png`, and `assets/street-crownway.png`.
 
 ### Auberlin townspeople
 

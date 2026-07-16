@@ -73,6 +73,72 @@ window.G = window.G || {};
     ]
   };
 
+  // Version-one city structure, rebuilt with street-level painted scenes.
+  // Spindle Square remains the hub; the four district roads connect both back
+  // to the square and around an outer loop. The illustrated town map is UI only.
+  G.STREETS = {
+    cinder: {
+      name: 'Cinder Row', subtitle: 'The western working street', img: 'street_cinder',
+      w: 1672, h: 941, groundY: 850, minX: 55, maxX: 1617, playerH: 160,
+      left: { district: 'ribbon', spawn: 'right', label: 'Ribbon Row' },
+      right: { mode: 'exterior', spawn: 'left', label: 'Spindle Square' },
+      shops: [
+        { x: 135, title: 'Hearth & Loaf Bakery', desc: 'Warm bread, currant buns, and yesterday’s loaves sold fairly.' },
+        { x: 365, title: 'Klee Laundry & Mending', desc: 'Pressed linen, honest patches, and Cinder Row news.' },
+        { x: 595, title: 'Chestnut Grocer', desc: 'Crates of apples, roots, herbs, and kitchen staples.' },
+        { x: 825, title: 'The Last & Awl', desc: 'Work boots and careful repairs for long days on cobbles.' },
+        { x: 1060, title: 'Mallow Apothecary', desc: 'Soap, liniment, lavender, and practical remedies.' },
+        { x: 1300, title: 'Old Lamp Books', desc: 'Secondhand novels, ledgers, and pattern catalogues.' },
+        { x: 1530, title: 'Second Stitch', supplier: 'charity_store', desc: 'Donated garments and useful remnants given another life.' },
+      ]
+    },
+    ribbon: {
+      name: 'Ribbon Row', subtitle: 'Auberlin’s cloth and notions market', img: 'street_ribbon',
+      w: 1672, h: 941, groundY: 850, minX: 55, maxX: 1617, playerH: 160,
+      left: { district: 'crownway', spawn: 'right', label: 'Crownway' },
+      right: { district: 'cinder', spawn: 'left', label: 'Cinder Row' },
+      shops: [
+        { x: 125, title: 'Ribbon Row Fabrics', supplier: 'fabric_store', desc: 'Bolts of gingham, plaid, linen, and dependable everyday cloth.' },
+        { x: 350, title: 'The Ribbon Cabinet', supplier: 'fabric_store', desc: 'Ribbons, trims, fastenings, and bright finishing touches.' },
+        { x: 585, title: 'Second Stitch Arcade', supplier: 'charity_store', desc: 'A tidy rail of pre-loved clothes and discounted remnants.' },
+        { x: 820, title: 'Madame Orla’s Millinery', desc: 'Hats for rain, weddings, market days, and being noticed.' },
+        { x: 1055, title: 'Button & Bone', supplier: 'fabric_store', desc: 'Drawers of buttons, buckles, hooks, and dress fastenings.' },
+        { x: 1300, title: 'Rosehip Tea Room', desc: 'Tea, little cakes, and two tables always saved for working women.' },
+        { x: 1530, title: 'Form & Figure', desc: 'Dress forms, display stands, and carved wooden hangers.' },
+      ]
+    },
+    larkspur: {
+      name: 'Larkspur Boulevard', subtitle: 'The eastern promenade', img: 'street_larkspur',
+      w: 1672, h: 941, groundY: 850, minX: 55, maxX: 1617, playerH: 160,
+      left: { mode: 'exterior', spawn: 'right', label: 'Spindle Square' },
+      right: { district: 'crownway', spawn: 'left', label: 'Crownway' },
+      shops: [
+        { x: 125, title: 'Violet Glass Perfumery', desc: 'Small cut-glass bottles and scents named after gardens.' },
+        { x: 350, title: 'Larkspur Flowers', desc: 'A narrow conservatory full of roses, ferns, and climbing jasmine.' },
+        { x: 590, title: 'Marchand Fine Shoes', desc: 'Hand-lasted shoes displayed like little sculptures.' },
+        { x: 825, title: 'Blue Finch Jewellers', desc: 'Cameos, lockets, watch chains, and restrained goldwork.' },
+        { x: 1060, title: 'Alba & Sons Atelier', desc: 'A gleaming rival dress atelier whose mannequins never slouch.' },
+        { x: 1300, title: 'Heron Porcelain', desc: 'Tea sets, serving plates, and painted keepsake boxes.' },
+        { x: 1530, title: 'The Gilt Leaf', desc: 'New books, society papers, and imported fashion folios.' },
+      ]
+    },
+    crownway: {
+      name: 'Crownway', subtitle: 'The northern civic avenue', img: 'street_crownway',
+      w: 1672, h: 941, groundY: 850, minX: 55, maxX: 1617, playerH: 160,
+      left: { district: 'larkspur', spawn: 'right', label: 'Larkspur Boulevard' },
+      right: { district: 'ribbon', spawn: 'left', label: 'Ribbon Row' },
+      shops: [
+        { x: 125, title: 'Bell & Balance Clockmakers', desc: 'Clocks, watches, and patient repairs beneath the city bell.' },
+        { x: 350, title: 'Quill & Seal Stationers', desc: 'Paper, ink, ledgers, invitations, and sealing wax.' },
+        { x: 590, title: 'Auberlin Music House', desc: 'Violins, brass horns, sheet music, and practice-room gossip.' },
+        { x: 825, title: 'Crownway Uniforms', desc: 'Ceremonial coats cut sharply and built to last.' },
+        { x: 1060, title: 'The Plum Parasol', desc: 'Umbrellas and walking canes for every kind of weather.' },
+        { x: 1300, title: 'Atlas & Copper Prints', desc: 'Town plans, engravings, landscapes, and framed maps.' },
+        { x: 1530, title: 'Campanile Café', desc: 'Strong coffee served within earshot of the great clock.' },
+      ]
+    }
+  };
+
   G.SUPPLIERS = {
     sheep_farm: {
       title: 'Briar Sheep Farm', logo: 'assets/logos/sheep-farm.svg', modifier: 0.9,
@@ -242,8 +308,8 @@ window.G = window.G || {};
       { id: 'chalkboard', label: 'Read the chalkboard', x: 125, y: 815, r: 85, icon: '📋' },
       { id: 'sign', label: 'Admire the tailor sign', x: 92, y: 610, r: 78, icon: '🪧' },
       { id: 'window_left', label: 'Study the window display', x: 220, y: 780, r: 90, icon: '🧵' },
-      { id: 'carriage', label: 'Watch the carriage', x: 715, y: 790, r: 105, icon: '🐴' },
-      { id: 'fountain', label: 'Rest by the fountain', x: 1010, y: 820, r: 115, icon: '⛲' },
+      { id: 'carriage', label: 'Take Crownway', x: 715, y: 790, r: 105, icon: '↟' },
+      { id: 'fountain', label: 'Take Ribbon Row', x: 1010, y: 820, r: 115, icon: '↓' },
       { id: 'flowers', label: 'Visit the flower conservatory', x: 1470, y: 790, r: 115, icon: '💐' },
     ],
   };

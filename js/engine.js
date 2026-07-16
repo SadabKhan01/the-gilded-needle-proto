@@ -175,6 +175,7 @@ window.G = window.G || {};
   G.setMode = function (name, opts) {
     G.modeName = name;
     G.mode = G.modes[name];
+    if (document.body) document.body.dataset.gameMode = name;
     if (G.mode.enter) G.mode.enter(opts || {});
   };
 

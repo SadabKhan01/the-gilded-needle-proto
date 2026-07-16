@@ -46,11 +46,18 @@ assert.equal(G.S.materials.thread, 4);
 assert.equal(G.MAP_LOCATIONS.length, 8);
 assert.ok(G.MAP_LOCATIONS.every(loc => loc.logo.endsWith('.svg')));
 assert.ok(G.MAP_LOCATIONS.every(loc => Number.isFinite(loc.walkX) && Number.isFinite(loc.walkY)));
-assert.ok(G.WORLD.roadNodes.length >= 25);
-assert.ok(G.WORLD.roadEdges.length >= 30);
+assert.deepEqual(Object.keys(G.STREETS), ['cinder', 'ribbon', 'larkspur', 'crownway']);
+assert.equal(Object.values(G.STREETS).reduce((sum, street) => sum + street.shops.length, 0), 28);
+assert.ok(Object.values(G.STREETS).every(street => street.left && street.right));
+assert.equal(G.STREETS.cinder.left.district, 'ribbon');
+assert.equal(G.STREETS.ribbon.left.district, 'crownway');
+assert.equal(G.STREETS.crownway.left.district, 'larkspur');
+assert.equal(G.STREETS.larkspur.left.mode, 'exterior');
 for (const loc of G.MAP_LOCATIONS) assert.ok(fs.existsSync(path.join(root, loc.logo)), `missing crest: ${loc.logo}`);
-assert.ok(fs.existsSync(path.join(root, 'assets/auberlin-open-world.png')));
 assert.ok(fs.existsSync(path.join(root, 'assets/auberlin-npcs.png')));
+for (const file of ['street-cinder-row.png', 'street-ribbon-row.png', 'street-larkspur.png', 'street-crownway.png']) {
+  assert.ok(fs.existsSync(path.join(root, 'assets', file)), `missing street: ${file}`);
+}
 
 const dressOrder = {
   kind: 'sew', status: 'open', name: 'Material test', fabric: 'gingham_red',

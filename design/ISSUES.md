@@ -57,10 +57,11 @@ Issues are ordered for a layered build. Each item is small enough to become a Gi
 - [ ] GN-308 P1 Add supplier stock calendars, price bands, and relationship discounts.
 - [ ] GN-309 P1 Add material reservation and provenance fields.
 - [ ] GN-310 P2 Add route planning and hireable material runner.
-- [x] GN-311 P0 Add camera-scrolling open-town traversal across the full supplied map.
-- [x] GN-312 P0 Add walk-up arrival points and connected road collision for all eight destinations.
+- [x] GN-311 P0 Restore version-one Spindle Square hub and four-district portal structure.
+- [x] GN-312 P0 Add four connected street-level panoramas with 28 visible shops.
 - [x] GN-313 P0 Add six illustrated roaming townspeople at the player's normalized scale.
 - [ ] GN-314 P1 Add dedicated walkable supplier and brickworks interiors.
+- [x] GN-315 P0 Keep the illustrated town map as navigation-only travel UI.
 
 ## Milestone 4 - tailoring depth
 

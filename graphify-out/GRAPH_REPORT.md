@@ -1,16 +1,16 @@
-# Graph Report - the-gilded-needle-proto  (2026-07-14)
+# Graph Report - the-gilded-needle-proto  (2026-07-15)
 
 ## Corpus Check
-- 14 files · ~928,500 words
+- 14 files · ~1,321,657 words
 - Verdict: corpus is large enough that graph structure adds value.
 
 ## Summary
-- 450 nodes · 580 edges · 75 communities (24 shown, 51 thin omitted)
-- Extraction: 79% EXTRACTED · 21% INFERRED · 0% AMBIGUOUS · INFERRED: 119 edges (avg confidence: 0.87)
+- 455 nodes · 599 edges · 75 communities (24 shown, 51 thin omitted)
+- Extraction: 80% EXTRACTED · 20% INFERRED · 0% AMBIGUOUS · INFERRED: 119 edges (avg confidence: 0.87)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `07f8b5dd`
+- Built from commit: `bd4916cb`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -93,11 +93,11 @@
 1. `ensure()` - 22 edges
 2. `The Gilded Needle - Product and Game Design Plan` - 21 edges
 3. `Spindle Square Overcast Scene` - 18 edges
-4. `Auberlin Town Map` - 15 edges
-5. `Hanging Tops Collection` - 13 edges
-6. `clamp()` - 11 edges
-7. `update()` - 11 edges
-8. `draw()` - 11 edges
+4. `draw()` - 15 edges
+5. `Auberlin Town Map` - 15 edges
+6. `update()` - 14 edges
+7. `Hanging Tops Collection` - 13 edges
+8. `clamp()` - 11 edges
 9. `Tailor Shop Storefront` - 11 edges
 10. `European Town Square` - 11 edges
 
@@ -147,7 +147,7 @@ Nodes (27): addTrash(), buyHome(), buySupply(), clamp(), cleanTrash(), clock(), 
 
 ### Community 6 - "Scene and Home Runtime"
 Cohesion: 0.13
-Nodes (33): allHotspots(), blocked(), customerAsk(), draw(), drawLetterbox(), drawLocation(), drawMarker(), drawNamePill() (+25 more)
+Nodes (38): allHotspots(), blocked(), customerAsk(), data(), draw(), drawEdge(), drawLetterbox(), drawLocation() (+30 more)
 
 ### Community 7 - "Auberlin Town Geography"
 Cohesion: 0.18
@@ -225,8 +225,6 @@ _Questions this graph is uniquely positioned to answer:_
   _Edge tagged AMBIGUOUS (relation: implements) - confidence is low._
 - **Are the 6 inferred relationships involving `Spindle Square Overcast Scene` (e.g. with `Environmental Storytelling` and `Eye-Level Wide Establishing Shot`) actually correct?**
   _`Spindle Square Overcast Scene` has 6 INFERRED edges - model-reasoned connections that need verification._
-- **Are the 2 inferred relationships involving `Hanging Tops Collection` (e.g. with `Repeated Silhouette Variants` and `Pink Sleeveless Top and Pleated Skirt Outfit`) actually correct?**
-  _`Hanging Tops Collection` has 2 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `assert`, `fs`, `path` to the rest of the system?**
   _186 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `Game Design and Art Plan` be split into smaller, more focused modules?**
@@ -235,3 +233,5 @@ _Questions this graph is uniquely positioned to answer:_
   _Cohesion score 0.0746031746031746 - nodes in this community are weakly interconnected._
 - **Should `Overcast Shopfront Reference` be split into smaller, more focused modules?**
   _Cohesion score 0.0907258064516129 - nodes in this community are weakly interconnected._
+- **Should `Wardrobe Catalog Reference` be split into smaller, more focused modules?**
+  _Cohesion score 0.07526881720430108 - nodes in this community are weakly interconnected._
